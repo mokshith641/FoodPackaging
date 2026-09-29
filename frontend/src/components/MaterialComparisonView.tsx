@@ -5,11 +5,10 @@ import {
   Trash2,
   CheckCircle2,
   XCircle,
-  ExternalLink,
-  ShieldCheck,
-  Leaf,
   Layers,
-  ArrowRight
+  ArrowRight,
+  ShieldCheck,
+  Leaf
 } from 'lucide-react';
 import {
   BarChart,
@@ -61,42 +60,36 @@ export const MaterialComparisonView: React.FC<MaterialComparisonViewProps> = ({
 
   const comparedMaterials = materials.filter((m) => selectedIds.includes(m.id));
 
-  // Chart data for comparing OTR (log scaled representation) and WVTR
-  const barrierChartData = comparedMaterials.map((m) => ({
+  // Chart data for comparing properties
+  const chartData = comparedMaterials.map((m) => ({
     name: m.material_code,
     fullName: m.name,
     WVTR: m.wvtr_ref,
     Cost: m.cost_inr_per_kg || 0,
-    CarbonFootprint: m.co2e_kg_per_kg || 0,
-    SustainabilityScore: m.sustainability_score || 0
+    Sustainability: m.sustainability_score || 0
   }));
 
   return (
     <div className="space-y-6 animate-fadeIn">
       {/* Header */}
-      <div className="glass-panel rounded-2xl p-6 border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-              <Scale className="w-5 h-5" />
-            </span>
-            <h1 className="text-xl font-bold text-white">
-              Side-by-Side Packaging Material Comparison
-            </h1>
-          </div>
-          <p className="text-xs text-slate-400">
-            Compare barrier permeability (OTR/WVTR), sealability, mechanical tensile strength, unit cost, and carbon footprint across polymer families.
+      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-xl font-bold text-slate-900">
+            Side-by-Side Packaging Material Comparison
+          </h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Compare barrier permeability (OTR / WVTR), thermal sealing properties, cost per kg, and sustainability scores.
           </p>
         </div>
 
-        <span className="text-xs font-mono text-cyan-400 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
+        <span className="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200">
           Comparing {comparedMaterials.length} of 4 Max Materials
         </span>
       </div>
 
       {/* Material Selection Pills */}
-      <div className="glass-panel rounded-xl p-4 border border-slate-800 space-y-2">
-        <div className="text-xs font-semibold text-slate-300">
+      <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-xs space-y-3">
+        <div className="text-xs font-semibold text-slate-700">
           Select Materials to Compare (Click to toggle):
         </div>
         <div className="flex flex-wrap gap-2">
@@ -106,241 +99,152 @@ export const MaterialComparisonView: React.FC<MaterialComparisonViewProps> = ({
               <button
                 key={m.id}
                 onClick={() => handleToggleMaterial(m.id)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                   isSelected
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
-                    : 'bg-slate-900 text-slate-400 border border-slate-800 hover:bg-slate-800 hover:text-slate-200'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'bg-slate-50 text-slate-700 hover:bg-slate-100 border border-slate-200'
                 }`}
               >
                 <span>{m.material_code}</span>
-                <span className="text-[11px] text-slate-400 font-normal truncate max-w-[120px]">{m.name}</span>
-                {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-cyan-400 ml-1" />}
+                <span className="opacity-80">({m.name.split(' ')[0]})</span>
+                {isSelected && <CheckCircle2 className="w-3.5 h-3.5 ml-0.5" />}
               </button>
             );
           })}
         </div>
       </div>
 
-      {comparedMaterials.length === 0 ? (
-        <div className="text-center py-12 glass-panel rounded-2xl border border-slate-800 text-slate-400 space-y-2">
-          <Layers className="w-8 h-8 mx-auto text-slate-500" />
-          <p className="text-xs">No materials selected for comparison.</p>
-          <p className="text-[11px] text-slate-500">Please select at least 2 materials above to generate the comparison matrix.</p>
+      {/* Comparison Grid */}
+      {comparedMaterials.length > 0 ? (
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-700">
+                  <th className="p-4 font-semibold w-48">Specification / Property</th>
+                  {comparedMaterials.map((m) => (
+                    <th key={m.id} className="p-4 font-bold text-slate-900 border-l border-slate-200">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-emerald-700 font-mono text-[11px]">{m.material_code}</div>
+                          <div className="text-xs font-bold text-slate-900">{m.name}</div>
+                        </div>
+                        <button
+                          onClick={() => handleToggleMaterial(m.id)}
+                          className="text-slate-400 hover:text-red-500 p-1"
+                          title="Remove material"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700">
+                <tr>
+                  <td className="p-4 font-semibold bg-slate-50/50">Polymer Family</td>
+                  {comparedMaterials.map((m) => (
+                    <td key={m.id} className="p-4 border-l border-slate-200 font-medium">
+                      {m.polymer_family}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold bg-slate-50/50">Gas Barrier Class</td>
+                  {comparedMaterials.map((m) => (
+                    <td key={m.id} className="p-4 border-l border-slate-200">
+                      <span className="capitalize px-2 py-0.5 rounded bg-slate-100 text-slate-800 text-[11px] font-medium">
+                        {m.gas_barrier_class}
+                      </span>
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold bg-slate-50/50">
+                    <div>Oxygen Permeability (OTR)</div>
+                    <div className="text-[10px] text-slate-400 font-normal">cm³/m²·day·atm</div>
+                  </td>
+                  {comparedMaterials.map((m) => (
+                    <td key={m.id} className="p-4 border-l border-slate-200 font-mono font-bold text-slate-900">
+                      {m.otr_ref}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold bg-slate-50/50">
+                    <div>Water Vapor Trans. (WVTR)</div>
+                    <div className="text-[10px] text-slate-400 font-normal">g/m²·day</div>
+                  </td>
+                  {comparedMaterials.map((m) => (
+                    <td key={m.id} className="p-4 border-l border-slate-200 font-mono font-bold text-slate-900">
+                      {m.wvtr_ref}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold bg-slate-50/50">
+                    <div>Approx. Cost (INR / kg)</div>
+                  </td>
+                  {comparedMaterials.map((m) => (
+                    <td key={m.id} className="p-4 border-l border-slate-200 font-mono font-medium text-emerald-700">
+                      {m.cost_inr_per_kg ? `₹${m.cost_inr_per_kg}` : 'N/A'}
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold bg-slate-50/50">Recyclability & Circularity</td>
+                  {comparedMaterials.map((m) => (
+                    <td key={m.id} className="p-4 border-l border-slate-200">
+                      <span className="capitalize text-slate-700 font-medium">
+                        {m.recyclability.replace(/_/g, ' ')}
+                      </span>
+                    </td>
+                  ))}
+                </tr>
+                <tr>
+                  <td className="p-4 font-semibold bg-slate-50/50">Sustainability Score</td>
+                  {comparedMaterials.map((m) => (
+                    <td key={m.id} className="p-4 border-l border-slate-200">
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-xs">
+                        {m.sustainability_score}/100
+                      </span>
+                    </td>
+                  ))}
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : (
-        <>
-          {/* Comparison Matrix Table */}
-          <div className="glass-panel rounded-2xl border border-slate-800 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs border-collapse">
-                <thead>
-                  <tr className="bg-slate-900/90 border-b border-slate-800 text-slate-300">
-                    <th className="p-3.5 font-bold uppercase tracking-wider text-[11px] w-48 sticky left-0 bg-slate-900 z-10">
-                      Property / Parameter
-                    </th>
-                    {comparedMaterials.map((m) => (
-                      <th key={m.id} className="p-3.5 font-bold text-slate-100 min-w-[200px] border-l border-slate-800/60">
-                        <div className="flex items-center justify-between">
-                          <span className="font-mono text-cyan-400">{m.material_code}</span>
-                          <button
-                            onClick={() => handleToggleMaterial(m.id)}
-                            className="text-slate-500 hover:text-rose-400 transition-colors p-1"
-                            title="Remove from comparison"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <div className="text-xs font-bold text-slate-100 mt-1">{m.name}</div>
-                        <div className="text-[11px] text-slate-400 font-normal">{m.structure}</div>
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-800/60 text-slate-300">
-                  {/* Category / Family */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Polymer Family</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 font-medium capitalize">
-                        {m.polymer_family.replace(/_/g, ' ')}
-                      </td>
-                    ))}
-                  </tr>
+        <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-500 shadow-xs">
+          <Scale className="w-8 h-8 mx-auto text-slate-400 mb-2" />
+          <p className="text-xs">No materials selected. Click the buttons above to select materials to compare.</p>
+        </div>
+      )}
 
-                  {/* Reference Thickness */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Reference Thickness</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 font-mono">
-                        {m.ref_thickness_um} µm ({m.thickness_min_um || m.ref_thickness_um} – {m.thickness_max_um || m.ref_thickness_um} µm)
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* WVTR Dual Units */}
-                  <tr className="bg-slate-900/30">
-                    <td className="p-3 font-semibold text-slate-300 sticky left-0 bg-slate-950/80">
-                      WVTR (38°C, 90% RH)
-                    </td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 font-mono">
-                        <strong className="text-emerald-400">{m.wvtr_ref}</strong> g/(m²·d)
-                        <div className="text-[10px] text-slate-400 font-normal">
-                          {roundNum(m.wvtr_ref / 15.500031)} g/(100 in²·d)
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* OTR Dual Units */}
-                  <tr className="bg-slate-900/30">
-                    <td className="p-3 font-semibold text-slate-300 sticky left-0 bg-slate-950/80">
-                      OTR (23°C, 0% RH)
-                    </td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 font-mono">
-                        <strong className="text-cyan-400">{m.otr_ref}</strong> cc/(m²·d·atm)
-                        <div className="text-[10px] text-slate-400 font-normal">
-                          {roundNum(m.otr_ref / 15.500031)} cc/(100 in²·d)
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Breathable / Gas Barrier Class */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Barrier Classification</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 capitalize">
-                        {m.gas_barrier_class} {m.is_breathable && <span className="text-emerald-400 font-bold">(Breathable)</span>}
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Tensile Strength */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Tensile Strength (ASTM D882)</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 font-mono">
-                        {m.tensile_strength_mpa ? `${m.tensile_strength_mpa} MPa` : 'N/A'}
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Sealability */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Heat Sealability</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60">
-                        <span className="capitalize">{m.sealability.replace(/_/g, ' ')}</span>
-                        {m.heat_seal_temp_c && <span className="text-slate-400 font-mono ml-1">({m.heat_seal_temp_c}°C)</span>}
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Low Temperature Freezer Suitability */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Freezer Temp Stability (&lt;0°C)</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60">
-                        {m.low_temp_ok ? (
-                          <span className="text-emerald-400 flex items-center gap-1">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Stable
-                          </span>
-                        ) : (
-                          <span className="text-rose-400 flex items-center gap-1 font-medium">
-                            <XCircle className="w-3.5 h-3.5" /> Brittle at &lt;0°C
-                          </span>
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Recyclability & Carbon Footprint */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Circularity & Carbon Footprint</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60">
-                        <div className="font-semibold text-emerald-400 capitalize">
-                          {m.recyclability.replace(/_/g, ' ')}
-                        </div>
-                        <div className="text-[11px] text-slate-400 font-mono">
-                          ~{m.co2e_kg_per_kg || '--'} kg CO₂e / kg resin
-                        </div>
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Indicative Cost */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Indicative Cost (INR)</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 font-mono font-bold text-slate-200">
-                        ₹{m.cost_inr_per_kg || 'N/A'} / kg
-                      </td>
-                    ))}
-                  </tr>
-
-                  {/* Engineering Notes */}
-                  <tr>
-                    <td className="p-3 font-semibold text-slate-400 sticky left-0 bg-slate-950/80">Engineering Notes</td>
-                    {comparedMaterials.map((m) => (
-                      <td key={m.id} className="p-3 border-l border-slate-800/60 text-[11px] text-slate-400 leading-relaxed">
-                        {m.notes || 'Standard industrial polymer specification.'}
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+      {/* Comparison Chart */}
+      {comparedMaterials.length > 0 && (
+        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-xs space-y-4">
+          <h2 className="text-base font-bold text-slate-900">
+            Water Vapor Permeability (WVTR) vs Sustainability Score
+          </h2>
+          <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 20 }}>
+                <XAxis dataKey="name" tick={{ fill: '#475569', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#475569', fontSize: 11 }} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px', fontSize: '11px' }}
+                />
+                <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                <Bar dataKey="WVTR" name="WVTR (g/m²·day - Lower is better)" fill="#0284c7" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="Sustainability" name="Sustainability Score (out of 100)" fill="#16a34a" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
-
-          {/* Graphical Comparison */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="glass-panel rounded-2xl p-5 border border-slate-800">
-              <h3 className="font-bold text-sm text-slate-200 mb-3">
-                Water Vapor Permeability (WVTR) Comparison
-              </h3>
-              <div className="h-56 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barrierChartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-                    <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                    <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px', color: '#f8fafc' }}
-                    />
-                    <Bar dataKey="WVTR" name="WVTR (g/m²·day)" fill="#10b981" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            <div className="glass-panel rounded-2xl p-5 border border-slate-800">
-              <h3 className="font-bold text-sm text-slate-200 mb-3">
-                Raw Material Cost (₹/kg) vs Carbon Footprint
-              </h3>
-              <div className="h-56 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={barrierChartData} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
-                    <XAxis dataKey="name" tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                    <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
-                    <Tooltip
-                      contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px', color: '#f8fafc' }}
-                    />
-                    <Legend wrapperStyle={{ fontSize: '11px' }} />
-                    <Bar dataKey="Cost" name="Cost (₹/kg)" fill="#06b6d4" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="CarbonFootprint" name="CO₂e (kg/kg)" fill="#f59e0b" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-        </>
+        </div>
       )}
     </div>
   );
 };
-
-function roundNum(val: number): number {
-  return Math.round(val * 1000) / 1000;
-}
