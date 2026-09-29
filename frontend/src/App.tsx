@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
+import { LandingPage } from './components/LandingPage';
+import { LoginPage } from './components/LoginPage';
+import { RegisterPage } from './components/RegisterPage';
 import { DashboardView } from './components/DashboardView';
 import { RecommendationWizard } from './components/RecommendationWizard';
 import { RecommendationResultsView } from './components/RecommendationResultsView';
@@ -7,7 +10,6 @@ import { AIAssistantView } from './components/AIAssistantView';
 import { MaterialComparisonView } from './components/MaterialComparisonView';
 import { SavedHistoryView } from './components/SavedHistoryView';
 import { AdminIngestView } from './components/AdminIngestView';
-import { AuthModal } from './components/AuthModal';
 import { api, authStorage } from './services/api';
 import {
   FoodCommodity,
@@ -21,43 +23,102 @@ import {
 import { AlertCircle, CheckCircle2, FlaskConical } from 'lucide-react';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<string>('home');
+  // Authentication & Public View State
   const [currentUser, setCurrentUser] = useState<User | null>(authStorage.getUser());
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
-  const [authModalInitialMode, setAuthModalInitialMode] = useState<'login' | 'register'>('login');
+  const [publicView, setPublicView] = useState<'landing' | 'login' | 'register'>('landing');
+  const [pendingRedirect, setPendingRedirect] = useState<string | null>(null);
+  const [isAuthChecking, setIsAuthChecking] = useState<boolean>(true);
 
+  // Authenticated App Tab State
+  const [activeTab, setActiveTab] = useState<string>('home');
   const [health, setHealth] = useState<SystemHealth | null>(null);
   const [commodities, setCommodities] = useState<FoodCommodity[]>([]);
   const [materials, setMaterials] = useState<PackagingMaterial[]>([]);
   const [savedRecs, setSavedRecs] = useState<SavedRecommendationSummary[]>([]);
 
-  // Active evaluation state
+  // Active recommendation evaluation state
   const [selectedCommodityForWizard, setSelectedCommodityForWizard] = useState<FoodCommodity | null>(null);
   const [activeRecommendationResult, setActiveRecommendationResult] = useState<RecommendationResponse | null>(null);
   const [compareCodes, setCompareCodes] = useState<string[]>([]);
 
-  // UI state
+  // UI status state
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Initialize session and parse initial hash routing
   useEffect(() => {
-    loadInitialData();
-    checkCurrentUser();
+    const initAuthAndRouting = async () => {
+      setIsAuthChecking(true);
+      const token = authStorage.getToken();
+      const hash = window.location.hash.replace('#', '');
+
+      let user: User | null = null;
+      if (token) {
+        try {
+          user = await api.getMe();
+          setCurrentUser(user);
+        } catch {
+          authStorage.removeToken();
+          setCurrentUser(null);
+          user = null;
+        }
+      }
+
+      if (user) {
+        // Authenticated user
+        if (['home', 'wizard', 'ai-assistant', 'comparison', 'history', 'ingest', 'results'].includes(hash)) {
+          setActiveTab(hash);
+        } else {
+          setActiveTab('home');
+        }
+        loadProtectedData();
+      } else {
+        // Unauthenticated user route protection
+        if (hash === 'login') {
+          setPublicView('login');
+        } else if (hash === 'register') {
+          setPublicView('register');
+        } else if (['home', 'wizard', 'ai-assistant', 'comparison', 'history', 'ingest'].includes(hash)) {
+          // Protected route accessed directly while unauthenticated -> save target & redirect to login
+          setPendingRedirect(hash);
+          setPublicView('login');
+        } else {
+          setPublicView('landing');
+        }
+      }
+      setIsAuthChecking(false);
+    };
+
+    initAuthAndRouting();
+
+    // Listen to hash changes for browser back/forward navigation
+    const handleHashChange = () => {
+      const currentHash = window.location.hash.replace('#', '');
+      const hasToken = !!authStorage.getToken();
+
+      if (!hasToken) {
+        if (currentHash === 'login') {
+          setPublicView('login');
+        } else if (currentHash === 'register') {
+          setPublicView('register');
+        } else if (['home', 'wizard', 'ai-assistant', 'comparison', 'history', 'ingest', 'results'].includes(currentHash)) {
+          setPendingRedirect(currentHash);
+          setPublicView('login');
+        } else {
+          setPublicView('landing');
+        }
+      } else {
+        if (['home', 'wizard', 'ai-assistant', 'comparison', 'history', 'ingest', 'results'].includes(currentHash)) {
+          setActiveTab(currentHash);
+        }
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const checkCurrentUser = async () => {
-    if (authStorage.getToken()) {
-      try {
-        const user = await api.getMe();
-        setCurrentUser(user);
-      } catch (err) {
-        authStorage.removeToken();
-        setCurrentUser(null);
-      }
-    }
-  };
-
-  const loadInitialData = async () => {
+  const loadProtectedData = async () => {
     try {
       const [h, c, m, r] = await Promise.all([
         api.getHealth().catch(() => null),
@@ -71,7 +132,7 @@ export function App() {
       setMaterials(m);
       setSavedRecs(r);
     } catch (err) {
-      console.error('Failed to load initial application state:', err);
+      console.error('Failed to load application data:', err);
     }
   };
 
@@ -82,26 +143,40 @@ export function App() {
     }, 4000);
   };
 
-  const handleOpenAuthModal = (mode: 'login' | 'register' = 'login') => {
-    setAuthModalInitialMode(mode);
-    setIsAuthModalOpen(true);
-  };
-
+  // Handle successful login or registration
   const handleAuthSuccess = (user: User) => {
     setCurrentUser(user);
     showNotification('success', `Welcome, ${user.name}!`);
-    // Reload user-specific saved recommendations
-    api.getSavedRecommendations().then(setSavedRecs).catch(() => {});
+
+    // Redirect to requested protected view or default to home/dashboard
+    const target = pendingRedirect && ['home', 'wizard', 'ai-assistant', 'comparison', 'history', 'ingest'].includes(pendingRedirect)
+      ? pendingRedirect
+      : 'home';
+
+    setPendingRedirect(null);
+    setActiveTab(target);
+    window.location.hash = target;
+
+    // Load full protected dataset
+    loadProtectedData();
   };
 
+  // Handle logout
   const handleLogout = async () => {
-    await api.logout();
-    setCurrentUser(null);
-    showNotification('success', 'You have been signed out.');
-    // Reload public recommendations
-    api.getSavedRecommendations().then(setSavedRecs).catch(() => {});
-    if (activeTab === 'ingest') {
+    try {
+      await api.logout();
+    } catch (err) {
+      console.error('Error during logout API call:', err);
+    } finally {
+      authStorage.removeToken();
+      setCurrentUser(null);
+      setPublicView('landing');
       setActiveTab('home');
+      setSelectedCommodityForWizard(null);
+      setActiveRecommendationResult(null);
+      setSavedRecs([]);
+      window.location.hash = '';
+      showNotification('success', 'You have been signed out successfully.');
     }
   };
 
@@ -112,8 +187,9 @@ export function App() {
       const res = await api.createRecommendation(formData);
       setActiveRecommendationResult(res);
       setActiveTab('results');
+      window.location.hash = 'results';
       showNotification('success', `Evaluated packaging candidates for ${formData.commodity_name}`);
-      // Refresh saved recommendations list in background
+      // Refresh saved recommendations
       api.getSavedRecommendations().then(setSavedRecs).catch(() => {});
     } catch (err: any) {
       showNotification('error', err.message || 'Failed to generate packaging recommendation');
@@ -127,6 +203,7 @@ export function App() {
   const handleSelectCommodityPreset = (commodity: FoodCommodity) => {
     setSelectedCommodityForWizard(commodity);
     setActiveTab('wizard');
+    window.location.hash = 'wizard';
   };
 
   // Inspect saved recommendation
@@ -136,6 +213,7 @@ export function App() {
       const rec = await api.getRecommendationById(id);
       setActiveRecommendationResult(rec);
       setActiveTab('results');
+      window.location.hash = 'results';
     } catch (err: any) {
       showNotification('error', `Could not load recommendation #${id}: ${err.message}`);
     } finally {
@@ -158,29 +236,112 @@ export function App() {
   const handleCompareMaterials = (codes: string[]) => {
     setCompareCodes(codes);
     setActiveTab('comparison');
+    window.location.hash = 'comparison';
   };
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    window.location.hash = tab;
+  };
+
+  // Initial Auth Loading Screen
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+          <span className="text-xs font-semibold text-slate-500">Loading PackSci AI...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // UNAUTHENTICATED PUBLIC PORTAL
+  // Strictly renders only Landing, Login, or Register
+  // ==========================================
+  if (!currentUser) {
+    return (
+      <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col justify-between">
+        {/* Floating Notification Toast */}
+        {notification && (
+          <div
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-xs font-semibold animate-slideUp ${
+              notification.type === 'success'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
+                : 'bg-red-50 border-red-300 text-red-800'
+            }`}
+          >
+            {notification.type === 'success' ? (
+              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            ) : (
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            )}
+            <span>{notification.message}</span>
+          </div>
+        )}
+
+        {publicView === 'landing' && (
+          <LandingPage
+            onNavigateToLogin={() => {
+              setPublicView('login');
+              window.location.hash = 'login';
+            }}
+            onNavigateToRegister={() => {
+              setPublicView('register');
+              window.location.hash = 'register';
+            }}
+          />
+        )}
+
+        {publicView === 'login' && (
+          <LoginPage
+            onSuccess={handleAuthSuccess}
+            onNavigateToRegister={() => {
+              setPublicView('register');
+              window.location.hash = 'register';
+            }}
+            onNavigateToHome={() => {
+              setPublicView('landing');
+              window.location.hash = '';
+            }}
+          />
+        )}
+
+        {publicView === 'register' && (
+          <RegisterPage
+            onSuccess={handleAuthSuccess}
+            onNavigateToLogin={() => {
+              setPublicView('login');
+              window.location.hash = 'login';
+            }}
+            onNavigateToHome={() => {
+              setPublicView('landing');
+              window.location.hash = '';
+            }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // ==========================================
+  // AUTHENTICATED APPLICATION INTERFACE
+  // ==========================================
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
       <Navbar
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleTabChange}
         health={health}
         currentUser={currentUser}
-        onOpenAuthModal={handleOpenAuthModal}
+        onOpenAuthModal={() => {}}
         onLogout={handleLogout}
         onNewRecommendationClick={() => {
           setSelectedCommodityForWizard(null);
           setActiveTab('wizard');
+          window.location.hash = 'wizard';
         }}
-      />
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-        onAuthSuccess={handleAuthSuccess}
-        initialMode={authModalInitialMode}
       />
 
       {/* Floating Notification Toast */}
@@ -209,7 +370,7 @@ export function App() {
             materials={materials}
             savedRecs={savedRecs}
             onSelectCommodityPreset={handleSelectCommodityPreset}
-            onNavigateTab={setActiveTab}
+            onNavigateTab={handleTabChange}
             onViewRecommendation={handleViewSavedRecommendation}
           />
         )}
@@ -242,17 +403,18 @@ export function App() {
           <SavedHistoryView
             savedRecs={savedRecs}
             currentUser={currentUser}
-            onOpenAuthModal={() => handleOpenAuthModal('login')}
+            onOpenAuthModal={() => {}}
             onViewRecommendation={handleViewSavedRecommendation}
             onDeleteRecommendation={handleDeleteRecommendation}
             onNewEvaluation={() => {
               setSelectedCommodityForWizard(null);
               setActiveTab('wizard');
+              window.location.hash = 'wizard';
             }}
           />
         )}
 
-        {activeTab === 'ingest' && (
+        {activeTab === 'ingest' && currentUser?.is_admin && (
           <AdminIngestView />
         )}
 
@@ -263,6 +425,7 @@ export function App() {
               onNewEvaluation={() => {
                 setSelectedCommodityForWizard(null);
                 setActiveTab('wizard');
+                window.location.hash = 'wizard';
               }}
               onCompareMaterials={handleCompareMaterials}
             />
@@ -272,7 +435,10 @@ export function App() {
               <h2 className="text-sm font-bold text-slate-800">No active recommendation evaluation</h2>
               <p className="text-xs text-slate-500">Run the recommendation wizard or choose a saved evaluation to view results.</p>
               <button
-                onClick={() => setActiveTab('wizard')}
+                onClick={() => {
+                  setActiveTab('wizard');
+                  window.location.hash = 'wizard';
+                }}
                 className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer"
               >
                 Launch Recommendation Wizard
@@ -282,7 +448,7 @@ export function App() {
         )}
       </main>
 
-      {/* Clean Footer */}
+      {/* Authenticated Clean Footer */}
       <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 mt-auto">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">

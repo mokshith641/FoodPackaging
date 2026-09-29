@@ -146,7 +146,21 @@ def test_rag_ai_chat_endpoint():
     chat_payload = {
         "question": "What packaging avoids anaerobic fermentation in fresh strawberries?"
     }
-    res = client.post("/api/v1/ai/chat", json=chat_payload)
+    # Unauthenticated attempt should fail with 401
+    unauth_res = client.post("/api/v1/ai/chat", json=chat_payload)
+    assert unauth_res.status_code == 401
+
+    # Register/login user for authenticated chat
+    auth_res = client.post("/api/v1/auth/register", json={
+        "name": "RAG Chat User",
+        "email": "rag_tester@packsci.ai",
+        "password": "SecurePassword123!",
+        "confirm_password": "SecurePassword123!"
+    })
+    token = auth_res.json()["access_token"]
+
+    # Authenticated attempt should succeed
+    res = client.post("/api/v1/ai/chat", json=chat_payload, headers={"Authorization": f"Bearer {token}"})
     assert res.status_code == 200
     data = res.json()
     assert "answer" in data
