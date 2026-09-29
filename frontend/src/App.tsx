@@ -6,19 +6,26 @@ import { RecommendationResultsView } from './components/RecommendationResultsVie
 import { AIAssistantView } from './components/AIAssistantView';
 import { MaterialComparisonView } from './components/MaterialComparisonView';
 import { SavedHistoryView } from './components/SavedHistoryView';
-import { api } from './services/api';
+import { AdminIngestView } from './components/AdminIngestView';
+import { AuthModal } from './components/AuthModal';
+import { api, authStorage } from './services/api';
 import {
   FoodCommodity,
   PackagingMaterial,
   RecommendationRequest,
   RecommendationResponse,
   SavedRecommendationSummary,
-  SystemHealth
+  SystemHealth,
+  User
 } from './types/api';
 import { AlertCircle, CheckCircle2, FlaskConical } from 'lucide-react';
 
 export function App() {
   const [activeTab, setActiveTab] = useState<string>('home');
+  const [currentUser, setCurrentUser] = useState<User | null>(authStorage.getUser());
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authModalInitialMode, setAuthModalInitialMode] = useState<'login' | 'register'>('login');
+
   const [health, setHealth] = useState<SystemHealth | null>(null);
   const [commodities, setCommodities] = useState<FoodCommodity[]>([]);
   const [materials, setMaterials] = useState<PackagingMaterial[]>([]);
@@ -35,7 +42,20 @@ export function App() {
 
   useEffect(() => {
     loadInitialData();
+    checkCurrentUser();
   }, []);
+
+  const checkCurrentUser = async () => {
+    if (authStorage.getToken()) {
+      try {
+        const user = await api.getMe();
+        setCurrentUser(user);
+      } catch (err) {
+        authStorage.removeToken();
+        setCurrentUser(null);
+      }
+    }
+  };
 
   const loadInitialData = async () => {
     try {
@@ -60,6 +80,29 @@ export function App() {
     setTimeout(() => {
       setNotification(null);
     }, 4000);
+  };
+
+  const handleOpenAuthModal = (mode: 'login' | 'register' = 'login') => {
+    setAuthModalInitialMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleAuthSuccess = (user: User) => {
+    setCurrentUser(user);
+    showNotification('success', `Welcome, ${user.name}!`);
+    // Reload user-specific saved recommendations
+    api.getSavedRecommendations().then(setSavedRecs).catch(() => {});
+  };
+
+  const handleLogout = async () => {
+    await api.logout();
+    setCurrentUser(null);
+    showNotification('success', 'You have been signed out.');
+    // Reload public recommendations
+    api.getSavedRecommendations().then(setSavedRecs).catch(() => {});
+    if (activeTab === 'ingest') {
+      setActiveTab('home');
+    }
   };
 
   // Handle recommendation submission from Wizard
@@ -123,10 +166,21 @@ export function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         health={health}
+        currentUser={currentUser}
+        onOpenAuthModal={handleOpenAuthModal}
+        onLogout={handleLogout}
         onNewRecommendationClick={() => {
           setSelectedCommodityForWizard(null);
           setActiveTab('wizard');
         }}
+      />
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+        initialMode={authModalInitialMode}
       />
 
       {/* Floating Notification Toast */}
@@ -187,6 +241,8 @@ export function App() {
         {activeTab === 'history' && (
           <SavedHistoryView
             savedRecs={savedRecs}
+            currentUser={currentUser}
+            onOpenAuthModal={() => handleOpenAuthModal('login')}
             onViewRecommendation={handleViewSavedRecommendation}
             onDeleteRecommendation={handleDeleteRecommendation}
             onNewEvaluation={() => {
@@ -194,6 +250,10 @@ export function App() {
               setActiveTab('wizard');
             }}
           />
+        )}
+
+        {activeTab === 'ingest' && (
+          <AdminIngestView />
         )}
 
         {activeTab === 'results' && (
@@ -228,7 +288,7 @@ export function App() {
           <div className="flex items-center gap-2">
             <span className="font-bold text-slate-800">PackSci AI</span>
             <span>•</span>
-            <span>Food Packaging Material Recommendation System</span>
+            <span>Intelligent Food Packaging Material Recommendation System</span>
           </div>
           <div className="text-[11px] text-slate-500">
             Validated against USDA FoodData Central, UC Davis Postharvest, and ASTM Barrier Standards.

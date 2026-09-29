@@ -6,6 +6,21 @@ from sqlalchemy.orm import relationship
 from app.database import Base
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(150), nullable=False)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    is_active = Column(Boolean, default=True)
+    is_admin = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
+
+    recommendations = relationship("Recommendation", back_populates="user", cascade="all, delete-orphan")
+
+
 class DataSource(Base):
     __tablename__ = "data_sources"
 
@@ -75,13 +90,11 @@ class PackagingMaterial(Base):
     thickness_scalable = Column(Boolean, default=True)
     
     # Barrier properties at reference thickness
-    # OTR in cc / (m² · day · atm) at 23°C, 0% RH
     otr_ref = Column(Float, nullable=False)
-    # WVTR in g / (m² · day) at 38°C, 90% RH
     wvtr_ref = Column(Float, nullable=False)
     
-    o2_permeability = Column(Float, nullable=True)  # cc · µm / (m² · day · atm)
-    wv_permeability = Column(Float, nullable=True)  # g · µm / (m² · day)
+    o2_permeability = Column(Float, nullable=True)
+    wv_permeability = Column(Float, nullable=True)
     co2_to_o2_ratio = Column(Float, default=4.0)
     
     tunable_otr_min = Column(Float, nullable=True)
@@ -90,18 +103,18 @@ class PackagingMaterial(Base):
     density_g_cc = Column(Float, nullable=True)
     tensile_strength_mpa = Column(Float, nullable=True)
     heat_seal_temp_c = Column(Float, nullable=True)
-    sealability = Column(String(50), default="good")  # good, fair, poor_alone, none
+    sealability = Column(String(50), default="good")
     standalone_pack_ok = Column(Boolean, default=True)
-    transparency = Column(String(50), default="high")  # high, medium, opaque
+    transparency = Column(String(50), default="high")
     light_barrier = Column(Boolean, default=False)
     low_temp_ok = Column(Boolean, default=True)
-    gas_barrier_class = Column(String(50), default="low")  # low, medium, high, breathable
+    gas_barrier_class = Column(String(50), default="low")
     is_breathable = Column(Boolean, default=False)
-    recyclability = Column(String(50), default="recyclable")  # recyclable, non_recyclable, limited, compostable
+    recyclability = Column(String(50), default="recyclable")
     is_biodegradable = Column(Boolean, default=False)
     cost_inr_per_kg = Column(Float, nullable=True)
     co2e_kg_per_kg = Column(Float, nullable=True)
-    sustainability_score = Column(Float, nullable=True)  # 0-100 scale
+    sustainability_score = Column(Float, nullable=True)
     food_contact_approved = Column(Boolean, default=True)
     notes = Column(Text, nullable=True)
     verification_status = Column(String(50), default="verified_datasheet")
@@ -120,7 +133,7 @@ class MaterialSpecification(Base):
     property_value = Column(Float, nullable=True)
     property_value_text = Column(String(200), nullable=True)
     unit = Column(String(50), nullable=False)
-    test_standard = Column(String(100), nullable=True)  # e.g., ASTM D3985, ASTM F1249
+    test_standard = Column(String(100), nullable=True)
     test_temp_c = Column(Float, nullable=True)
     test_rh_pct = Column(Float, nullable=True)
     is_measured = Column(Boolean, default=True)
@@ -133,6 +146,7 @@ class Recommendation(Base):
     __tablename__ = "recommendations"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=True, index=True)
     commodity_id = Column(Integer, ForeignKey("food_commodities.id"), nullable=True)
     commodity_name = Column(String(200), nullable=False)
     commodity_category = Column(String(100), nullable=False)
@@ -142,14 +156,14 @@ class Recommendation(Base):
     respiration_rate = Column(Float, nullable=True)
     respiration_rate_unit = Column(String(50), default="mg_CO2_kg_h")
     target_shelf_life_days = Column(Float, nullable=False)
-    storage_type = Column(String(50), nullable=False)  # ambient, chilled, frozen, cool
+    storage_type = Column(String(50), nullable=False)
     storage_temp_c = Column(Float, nullable=False)
     relative_humidity_pct = Column(Float, nullable=False)
     transport_condition = Column(String(100), default="normal")
-    cost_tier = Column(String(50), default="balanced")  # budget, balanced, premium
-    sustainability_priority = Column(String(50), default="medium")  # low, medium, high
-    product_state = Column(String(50), default="fresh")  # fresh, dried, liquid, frozen, processed
-    package_format = Column(String(100), nullable=True)  # pouch, tray, vacuum_skin, bag, carton
+    cost_tier = Column(String(50), default="balanced")
+    sustainability_priority = Column(String(50), default="medium")
+    product_state = Column(String(50), default="fresh")
+    package_format = Column(String(100), nullable=True)
     user_notes = Column(Text, nullable=True)
     
     # Scoring & explanation persistence
@@ -157,6 +171,7 @@ class Recommendation(Base):
     ai_model_used = Column(String(100), nullable=True)
     created_at = Column(DateTime, default=datetime.datetime.utcnow, index=True)
 
+    user = relationship("User", back_populates="recommendations")
     materials = relationship("RecommendationMaterial", back_populates="recommendation", cascade="all, delete-orphan")
 
 
@@ -180,7 +195,7 @@ class RecommendationMaterial(Base):
     sustainability_score = Column(Float, nullable=False)
     
     compatibility_verdict = Column(String(100), nullable=False)
-    warnings = Column(Text, nullable=True)  # JSON or comma-separated
+    warnings = Column(Text, nullable=True)
     trade_offs = Column(Text, nullable=True)
     experimental_shelf_life_min = Column(Float, nullable=True)
     experimental_shelf_life_max = Column(Float, nullable=True)
@@ -191,4 +206,5 @@ class RecommendationMaterial(Base):
 
 
 Index("idx_rec_created", Recommendation.created_at)
+Index("idx_rec_user", Recommendation.user_id)
 Index("idx_mat_barrier", PackagingMaterial.gas_barrier_class, PackagingMaterial.recyclability)

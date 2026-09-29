@@ -1,9 +1,10 @@
 import json
-from typing import List
+from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.models import (
+    User,
     FoodCommodity,
     PackagingMaterial,
     Recommendation,
@@ -18,6 +19,7 @@ from app.schemas.recommendation import (
     RejectedCandidate,
 )
 from app.engine.recommender import PackagingRecommendationEngine
+from app.services.auth_service import get_optional_current_user, get_current_user
 
 router = APIRouter()
 
@@ -25,7 +27,8 @@ router = APIRouter()
 @router.post("", response_model=RecommendationResponse, status_code=status.HTTP_201_CREATED)
 def create_recommendation(
     request: RecommendationRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_current_user)
 ):
     # Lookup commodity if provided or by name
     commodity = None
@@ -48,8 +51,9 @@ def create_recommendation(
         all_materials=materials
     )
 
-    # Persist recommendation to database
+    # Persist recommendation to database (associated with user if signed in)
     db_rec = Recommendation(
+        user_id=current_user.id if current_user else None,
         commodity_id=commodity.id if commodity else None,
         commodity_name=request.commodity_name,
         commodity_category=request.commodity_category,
@@ -105,9 +109,18 @@ def create_recommendation(
 def list_saved_recommendations(
     skip: int = Query(0, ge=0),
     limit: int = Query(50, ge=1, le=100),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_current_user)
 ):
-    recs = db.query(Recommendation).order_by(Recommendation.created_at.desc()).offset(skip).limit(limit).all()
+    query = db.query(Recommendation)
+    if current_user:
+        # User-specific isolation: show recommendations owned by the current user (or public legacy with user_id=None)
+        query = query.filter((Recommendation.user_id == current_user.id) | (Recommendation.user_id.is_(None)))
+    else:
+        # For guest visitors: show public legacy demo evaluations
+        query = query.filter(Recommendation.user_id.is_(None))
+
+    recs = query.order_by(Recommendation.created_at.desc()).offset(skip).limit(limit).all()
     summaries = []
     for r in recs:
         top_mat = db.query(RecommendationMaterial).filter(
@@ -129,10 +142,22 @@ def list_saved_recommendations(
 
 
 @router.get("/{rec_id}", response_model=RecommendationResponse)
-def get_recommendation_by_id(rec_id: int, db: Session = Depends(get_db)):
+def get_recommendation_by_id(
+    rec_id: int,
+    db: Session = Depends(get_db),
+    current_user: Optional[User] = Depends(get_optional_current_user)
+):
     rec = db.query(Recommendation).filter(Recommendation.id == rec_id).first()
     if not rec:
         raise HTTPException(status_code=404, detail=f"Recommendation #{rec_id} not found")
+
+    # Enforce ownership check: if record is owned by a user, only that user (or admin) can view it
+    if rec.user_id is not None:
+        if not current_user or (current_user.id != rec.user_id and not current_user.is_admin):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have permission to view this recommendation."
+            )
 
     rec_materials = db.query(RecommendationMaterial).filter(
         RecommendationMaterial.recommendation_id == rec.id
@@ -220,10 +245,22 @@ def get_recommendation_by_id(rec_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/{rec_id}", status_code=status.HTTP_200_OK)
-def delete_recommendation(rec_id: int, db: Session = Depends(get_db)):
+def delete_recommendation(
+    rec_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
     rec = db.query(Recommendation).filter(Recommendation.id == rec_id).first()
     if not rec:
         raise HTTPException(status_code=404, detail=f"Recommendation #{rec_id} not found")
+
+    # Enforce strict ownership: user can only delete their own recommendation
+    if rec.user_id is not None and rec.user_id != current_user.id and not current_user.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to delete this recommendation."
+        )
+
     db.delete(rec)
     db.commit()
     return {"status": "success", "message": f"Recommendation #{rec_id} deleted successfully"}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Package,
   Home,
@@ -6,14 +6,22 @@ import {
   FlaskConical,
   Scale,
   BookmarkCheck,
-  Bot
+  Bot,
+  User as UserIcon,
+  LogOut,
+  LogIn,
+  UploadCloud,
+  ChevronDown
 } from 'lucide-react';
-import { SystemHealth } from '../types/api';
+import { SystemHealth, User } from '../types/api';
 
 interface NavbarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   health: SystemHealth | null;
+  currentUser: User | null;
+  onOpenAuthModal: (mode: 'login' | 'register') => void;
+  onLogout: () => void;
   onNewRecommendationClick: () => void;
 }
 
@@ -21,8 +29,13 @@ export const Navbar: React.FC<NavbarProps> = ({
   activeTab,
   setActiveTab,
   health,
+  currentUser,
+  onOpenAuthModal,
+  onLogout,
   onNewRecommendationClick
 }) => {
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'wizard', label: 'Get Recommendation', icon: FlaskConical },
@@ -30,6 +43,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     { id: 'comparison', label: 'Compare Materials', icon: Scale },
     { id: 'history', label: 'My Recommendations', icon: BookmarkCheck },
   ];
+
+  if (currentUser?.is_admin) {
+    navItems.push({ id: 'ingest', label: 'Knowledge Base', icon: UploadCloud });
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-slate-200 shadow-xs">
@@ -49,7 +66,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   PackSci AI
                 </span>
                 <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  Intelligent System
+                  RAG System
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 hidden sm:block">
@@ -67,7 +84,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all cursor-pointer ${
                     isActive
                       ? 'bg-emerald-50 text-emerald-800 font-semibold border border-emerald-200/80 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
@@ -80,21 +97,86 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Action & System Indicator */}
+          {/* Right Actions, Auth Menu & CTA */}
           <div className="flex items-center gap-3">
-            {health?.ai_service?.groq_configured && (
-              <span className="hidden lg:flex items-center gap-1.5 text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200">
-                <Sparkles className="w-3 h-3 text-emerald-600" /> Groq AI Ready
-              </span>
-            )}
-
             <button
               onClick={onNewRecommendationClick}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs shadow-xs transition-colors cursor-pointer"
+              className="hidden lg:flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition-colors cursor-pointer"
             >
               <FlaskConical className="w-3.5 h-3.5" />
               <span>Get Recommendation</span>
             </button>
+
+            {currentUser ? (
+              <div className="relative">
+                <button
+                  onClick={() => setShowUserMenu(!showUserMenu)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-800 cursor-pointer transition-colors"
+                >
+                  <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold text-[11px]">
+                    {currentUser.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="hidden sm:inline max-w-[120px] truncate">{currentUser.name}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+
+                {showUserMenu && (
+                  <div
+                    className="absolute right-0 mt-2 w-52 bg-white rounded-xl border border-slate-200 shadow-lg py-1 z-50 animate-scaleUp"
+                    onClick={() => setShowUserMenu(false)}
+                  >
+                    <div className="px-3.5 py-2 border-b border-slate-100">
+                      <p className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{currentUser.email}</p>
+                    </div>
+
+                    <button
+                      onClick={() => setActiveTab('history')}
+                      className="w-full text-left px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                    >
+                      <BookmarkCheck className="w-4 h-4 text-slate-500" />
+                      <span>My Recommendations</span>
+                    </button>
+
+                    {currentUser.is_admin && (
+                      <button
+                        onClick={() => setActiveTab('ingest')}
+                        className="w-full text-left px-3.5 py-2 text-xs text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
+                      >
+                        <UploadCloud className="w-4 h-4 text-slate-500" />
+                        <span>Knowledge Ingestion</span>
+                      </button>
+                    )}
+
+                    <div className="border-t border-slate-100 my-1"></div>
+
+                    <button
+                      onClick={onLogout}
+                      className="w-full text-left px-3.5 py-2 text-xs text-red-600 hover:bg-red-50 flex items-center gap-2 cursor-pointer font-medium"
+                    >
+                      <LogOut className="w-4 h-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => onOpenAuthModal('login')}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-xs font-semibold cursor-pointer transition-colors"
+                >
+                  <LogIn className="w-3.5 h-3.5" />
+                  <span>Sign In</span>
+                </button>
+                <button
+                  onClick={() => onOpenAuthModal('register')}
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold transition-colors cursor-pointer"
+                >
+                  <span>Register</span>
+                </button>
+              </div>
+            )}
           </div>
         </div>
 

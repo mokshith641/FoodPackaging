@@ -16,7 +16,7 @@ class GroqExplanationService:
     @classmethod
     def generate_explanation(cls, request: AIExplainRequest) -> AIExplainResponse:
         api_key = settings.get_groq_api_key()
-        model_name = settings.GROQ_MODEL_NAME or "llama-3.3-70b-versatile"
+        model_name = settings.GROQ_MODEL_NAME or "qwen/qwen3.8-27b"
 
         if not api_key:
             logger.info("Groq API key not found in environment. Generating deterministic expert fallback explanation.")

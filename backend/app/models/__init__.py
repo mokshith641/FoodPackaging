@@ -1,4 +1,5 @@
 from app.models.models import (
+    User,
     DataSource,
     FoodCommodity,
     PackagingMaterial,
@@ -8,6 +9,7 @@ from app.models.models import (
 )
 
 __all__ = [
+    "User",
     "DataSource",
     "FoodCommodity",
     "PackagingMaterial",

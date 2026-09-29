@@ -24,7 +24,6 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
 
     # Database configuration
-    # Supports direct DATABASE_URL or Supabase/Postgres variables or fallback to SQLite
     DATABASE_URL: Optional[str] = None
     POSTGRES_URL_NON_POOLING: Optional[str] = None
     POSTGRES_PRISMA_URL: Optional[str] = None
@@ -33,7 +32,20 @@ class Settings(BaseSettings):
     # Groq API configuration
     GROQ_API_KEY: Optional[str] = None
     GROQ_API: Optional[str] = None
-    GROQ_MODEL_NAME: str = "llama-3.3-70b-versatile"
+    GROQ_MODEL_NAME: str = "qwen/qwen3.8-27b"
+
+    # Authentication / JWT configuration
+    JWT_SECRET_KEY: Optional[str] = None
+    SUPABASE_JWT_SECRET: Optional[str] = None
+    JWT_ALGORITHM: str = "HS256"
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+
+    # Qdrant Vector Database configuration
+    QDRANT_URL: Optional[str] = None
+    QDRANT_API_KEY: Optional[str] = None
+    QDRANT_COLLECTION_NAME: str = "food_packaging_corpus"
+    EMBEDDING_MODEL_NAME: str = "BAAI/bge-small-en-v1.5"
+    EMBEDDING_DIM: int = 384
 
     # CORS configuration
     FRONTEND_ORIGIN: str = "http://localhost:5173"
@@ -50,11 +62,9 @@ class Settings(BaseSettings):
             or os.getenv("POSTGRES_URL")
         )
         if url:
-            # Clean postgres:// to postgresql:// for SQLAlchemy 2.0
             if url.startswith("postgres://"):
                 url = "postgresql://" + url[len("postgres://"):]
             return url
-        # Fallback to local SQLite if no remote database string is configured
         db_path = root_dir / "food_packaging.db"
         return f"sqlite:///{db_path}"
 
@@ -64,6 +74,28 @@ class Settings(BaseSettings):
             or self.GROQ_API
             or os.getenv("GROQ_API_KEY")
             or os.getenv("GROQ_API")
+        )
+
+    def get_jwt_secret(self) -> str:
+        return (
+            self.JWT_SECRET_KEY
+            or self.SUPABASE_JWT_SECRET
+            or os.getenv("JWT_SECRET_KEY")
+            or os.getenv("SUPABASE_JWT_SECRET")
+            or "packsci-ai-secure-jwt-secret-key-food-packaging-2026"
+        )
+
+    def get_qdrant_url(self) -> Optional[str]:
+        return (
+            self.QDRANT_URL
+            or os.getenv("QDRANT_URL")
+            or os.getenv("QDRANT_HOST")
+        )
+
+    def get_qdrant_api_key(self) -> Optional[str]:
+        return (
+            self.QDRANT_API_KEY
+            or os.getenv("QDRANT_API_KEY")
         )
 
     class Config:

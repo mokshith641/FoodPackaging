@@ -1,3 +1,79 @@
+export interface User {
+  id: number;
+  name: string;
+  email: string;
+  is_active: boolean;
+  is_admin: boolean;
+  created_at: string;
+}
+
+export interface UserRegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  confirm_password: string;
+}
+
+export interface UserLoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface TokenResponse {
+  access_token: string;
+  token_type: string;
+  user: User;
+}
+
+export interface SourceCitation {
+  source_id: number;
+  title: string;
+  url?: string;
+  type: string;
+  relevance_score: number;
+  snippet: string;
+}
+
+export interface ChatQueryRequest {
+  question: string;
+  focus_commodity_id?: number | null;
+}
+
+export interface ChatQueryResponse {
+  question: string;
+  answer: string;
+  provider: string;
+  model_name: string;
+  sources: SourceCitation[];
+  database_matches: number;
+  created_at: string;
+}
+
+export interface DocumentIngestRequest {
+  title: string;
+  content: string;
+  source_url?: string;
+  doc_type?: string;
+  page_number?: number | null;
+}
+
+export interface DocumentIngestResponse {
+  status: string;
+  document_title: string;
+  chunks_ingested: number;
+  message?: string;
+}
+
+export interface QdrantStatusResponse {
+  status: string;
+  collection_name?: string;
+  embedding_model?: string;
+  embedding_dim?: number;
+  points_count?: number;
+  cloud_url_configured?: boolean;
+  message?: string;
+}
+
 export interface FoodCommodity {
   id: number;
   commodity_code: string;
@@ -184,18 +260,6 @@ export interface AIExplainResponse {
   status_message?: string | null;
 }
 
-export interface DataSource {
-  id: number;
-  source_name: string;
-  source_type: string;
-  organization: string;
-  url?: string | null;
-  license?: string | null;
-  description?: string | null;
-  verification_date?: string | null;
-  data_quality_notes?: string | null;
-}
-
 export interface MissingFieldStat {
   field_name: string;
   missing_count: number;
@@ -221,6 +285,18 @@ export interface DataQualityReport {
   notes: string;
 }
 
+export interface DataSource {
+  id: number;
+  source_name: string;
+  source_type: string;
+  organization: string;
+  url?: string | null;
+  license?: string | null;
+  description?: string | null;
+  verification_date?: string | null;
+  data_quality_notes?: string | null;
+}
+
 export interface SystemHealth {
   status: string;
   service: string;
@@ -236,3 +312,4 @@ export interface SystemHealth {
     fallback_available: boolean;
   };
 }
+

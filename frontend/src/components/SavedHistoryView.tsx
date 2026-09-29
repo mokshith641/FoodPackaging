@@ -5,12 +5,16 @@ import {
   Clock,
   FlaskConical,
   Search,
-  ArrowRight
+  ArrowRight,
+  LogIn,
+  ShieldCheck
 } from 'lucide-react';
-import { SavedRecommendationSummary } from '../types/api';
+import { SavedRecommendationSummary, User } from '../types/api';
 
 interface SavedHistoryViewProps {
   savedRecs: SavedRecommendationSummary[];
+  currentUser: User | null;
+  onOpenAuthModal: () => void;
   onViewRecommendation: (id: number) => void;
   onDeleteRecommendation: (id: number) => Promise<void>;
   onNewEvaluation: () => void;
@@ -18,6 +22,8 @@ interface SavedHistoryViewProps {
 
 export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
   savedRecs,
+  currentUser,
+  onOpenAuthModal,
   onViewRecommendation,
   onDeleteRecommendation,
   onNewEvaluation
@@ -49,10 +55,12 @@ export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
       <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-slate-900">
-            My Saved Recommendations
+            {currentUser ? `${currentUser.name}'s Recommendations` : 'My Saved Recommendations'}
           </h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            View, inspect, or manage your previously evaluated food packaging analyses.
+            {currentUser
+              ? 'Private packaging analyses saved to your personal account.'
+              : 'View and manage your recent evaluated food packaging analyses.'}
           </p>
         </div>
 
@@ -64,6 +72,25 @@ export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
           <span>New Recommendation</span>
         </button>
       </div>
+
+      {/* Guest Notice if not logged in */}
+      {!currentUser && (
+        <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2 text-emerald-900">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>
+              Sign in to automatically save evaluations to your account and keep a permanent history across devices.
+            </span>
+          </div>
+          <button
+            onClick={onOpenAuthModal}
+            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors shrink-0 cursor-pointer flex items-center gap-1"
+          >
+            <LogIn className="w-3.5 h-3.5" />
+            <span>Sign In / Register</span>
+          </button>
+        </div>
+      )}
 
       {/* Search Filter Bar */}
       <div className="bg-white rounded-xl p-3.5 border border-slate-200 shadow-xs flex items-center gap-3">
