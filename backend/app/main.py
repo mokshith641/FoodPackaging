@@ -73,13 +73,7 @@ app = FastAPI(
 )
 
 # CORS setup
-origins = [
-    settings.FRONTEND_ORIGIN,
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-]
+origins = settings.get_cors_origins()
 
 app.add_middleware(
     CORSMiddleware,
@@ -92,11 +86,23 @@ app.add_middleware(
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
 
+@app.get("/health")
+def health_check():
+    return {
+        "status": "online",
+        "service": "PackSci AI Backend",
+        "version": app.version,
+        "environment": settings.ENVIRONMENT
+    }
+
+
 @app.get("/")
 def root():
     return {
         "project": "Food Packaging Recommendation API",
         "docs": "/docs",
-        "health": f"{settings.API_V1_STR}/health",
+        "health": "/health",
+        "api_v1_health": f"{settings.API_V1_STR}/health",
         "qdrant": f"{settings.API_V1_STR}/qdrant/status"
     }
+

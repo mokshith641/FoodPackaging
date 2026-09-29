@@ -19,7 +19,13 @@ import {
   SystemHealth,
 } from '../types/api';
 
-const API_BASE = '/api/v1';
+const BACKEND_URL = (
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ||
+  (import.meta.env.VITE_API_URL as string | undefined) ||
+  ''
+).trim().replace(/\/$/, '');
+
+const API_BASE = BACKEND_URL ? `${BACKEND_URL}/api/v1` : '/api/v1';
 
 // Token Storage Utilities
 const TOKEN_KEY = 'packsci_auth_token';

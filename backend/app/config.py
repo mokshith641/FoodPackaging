@@ -49,6 +49,49 @@ class Settings(BaseSettings):
 
     # CORS configuration
     FRONTEND_ORIGIN: str = "http://localhost:5173"
+    FRONTEND_URL: Optional[str] = None
+    CORS_ORIGINS: Optional[str] = None
+
+    def get_cors_origins(self) -> list[str]:
+        origins = [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+        ]
+        if self.FRONTEND_ORIGIN:
+            origins.append(self.FRONTEND_ORIGIN.strip().rstrip("/"))
+        if self.FRONTEND_URL:
+            origins.append(self.FRONTEND_URL.strip().rstrip("/"))
+        
+        env_frontend = os.getenv("FRONTEND_URL")
+        if env_frontend:
+            origins.append(env_frontend.strip().rstrip("/"))
+
+        env_cors = self.CORS_ORIGINS or os.getenv("CORS_ORIGINS")
+        if env_cors:
+            if env_cors.startswith("[") and env_cors.endswith("]"):
+                import json
+                try:
+                    parsed = json.loads(env_cors)
+                    if isinstance(parsed, list):
+                        origins.extend([str(o).strip().rstrip("/") for o in parsed])
+                except Exception:
+                    pass
+            else:
+                for part in env_cors.split(","):
+                    p = part.strip().rstrip("/")
+                    if p:
+                        origins.append(p)
+
+        # Deduplicate
+        seen = set()
+        deduped = []
+        for o in origins:
+            if o and o not in seen:
+                seen.add(o)
+                deduped.append(o)
+        return deduped
 
     def get_database_url(self) -> str:
         url = (

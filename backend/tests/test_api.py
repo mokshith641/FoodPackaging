@@ -56,8 +56,31 @@ def test_create_and_manage_recommendation(client):
         "package_format": "pouch"
     }
 
-    # Create recommendation
-    res = client.post("/api/v1/recommendations", json=payload)
+    # 1. Unauthenticated request must return 401
+    unauth_res = client.post("/api/v1/recommendations", json=payload)
+    assert unauth_res.status_code == 401
+
+    # 2. Register/Login test user
+    user_email = "api_test_user@packsci.ai"
+    reg_res = client.post("/api/v1/auth/register", json={
+        "name": "API Test User",
+        "email": user_email,
+        "password": "Password123!",
+        "confirm_password": "Password123!"
+    })
+    if reg_res.status_code == 201:
+        token = reg_res.json()["access_token"]
+    else:
+        login_res = client.post("/api/v1/auth/login", json={
+            "email": user_email,
+            "password": "Password123!"
+        })
+        token = login_res.json()["access_token"]
+
+    auth_headers = {"Authorization": f"Bearer {token}"}
+
+    # 3. Create recommendation
+    res = client.post("/api/v1/recommendations", json=payload, headers=auth_headers)
     assert res.status_code == 201
     rec_data = res.json()
     assert rec_data["id"] is not None
@@ -65,24 +88,25 @@ def test_create_and_manage_recommendation(client):
 
     rec_id = rec_data["id"]
 
-    # List recommendations
-    list_res = client.get("/api/v1/recommendations")
+    # 4. List recommendations
+    list_res = client.get("/api/v1/recommendations", headers=auth_headers)
     assert list_res.status_code == 200
     summaries = list_res.json()
     assert any(s["id"] == rec_id for s in summaries)
 
-    # Get single recommendation
-    get_res = client.get(f"/api/v1/recommendations/{rec_id}")
+    # 5. Get single recommendation
+    get_res = client.get(f"/api/v1/recommendations/{rec_id}", headers=auth_headers)
     assert get_res.status_code == 200
     assert get_res.json()["id"] == rec_id
 
-    # Delete recommendation
-    del_res = client.delete(f"/api/v1/recommendations/{rec_id}")
+    # 6. Delete recommendation
+    del_res = client.delete(f"/api/v1/recommendations/{rec_id}", headers=auth_headers)
     assert del_res.status_code == 200
 
-    # Ensure 404 on deleted
-    not_found_res = client.get(f"/api/v1/recommendations/{rec_id}")
+    # 7. Ensure 404 on deleted
+    not_found_res = client.get(f"/api/v1/recommendations/{rec_id}", headers=auth_headers)
     assert not_found_res.status_code == 404
+
 
 
 def test_data_sources_and_quality_report(client):
