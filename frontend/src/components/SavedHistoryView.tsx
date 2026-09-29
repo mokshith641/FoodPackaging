@@ -6,7 +6,6 @@ import {
   FlaskConical,
   Search,
   ArrowRight,
-  LogIn,
   ShieldCheck
 } from 'lucide-react';
 import { SavedRecommendationSummary, User } from '../types/api';
@@ -23,7 +22,6 @@ interface SavedHistoryViewProps {
 export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
   savedRecs,
   currentUser,
-  onOpenAuthModal,
   onViewRecommendation,
   onDeleteRecommendation,
   onNewEvaluation
@@ -50,62 +48,48 @@ export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-4 animate-govFadeIn text-[#202B38]">
+      {/* Breadcrumb Navigation */}
+      <div className="flex items-center gap-1.5 text-xs text-[#5E6B78]">
+        <span className="font-semibold text-[#17365D]">Portal</span>
+        <span>/</span>
+        <span>My Saved Recommendations</span>
+      </div>
+
       {/* Header */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-white rounded-lg p-5 border border-[#D8E1EA] shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">
-            {currentUser ? `${currentUser.name}'s Recommendations` : 'My Saved Recommendations'}
+          <h1 className="text-lg font-bold text-[#17365D] tracking-tight">
+            {currentUser ? `${currentUser.name}'s Saved Evaluations` : 'My Recommendations'}
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {currentUser
-              ? 'Private packaging analyses saved to your personal account.'
-              : 'View and manage your recent evaluated food packaging analyses.'}
+          <p className="text-xs text-[#5E6B78] mt-0.5">
+            Private packaging evaluations saved to your personal account in PostgreSQL.
           </p>
         </div>
 
         <button
           onClick={onNewEvaluation}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-[#16834A] hover:bg-[#136f3e] text-white text-xs font-semibold shadow-xs transition-colors cursor-pointer"
         >
           <FlaskConical className="w-3.5 h-3.5" />
           <span>New Recommendation</span>
         </button>
       </div>
 
-      {/* Guest Notice if not logged in */}
-      {!currentUser && (
-        <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
-          <div className="flex items-center gap-2 text-emerald-900">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>
-              Sign in to automatically save evaluations to your account and keep a permanent history across devices.
-            </span>
-          </div>
-          <button
-            onClick={onOpenAuthModal}
-            className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs transition-colors shrink-0 cursor-pointer flex items-center gap-1"
-          >
-            <LogIn className="w-3.5 h-3.5" />
-            <span>Sign In / Register</span>
-          </button>
-        </div>
-      )}
-
       {/* Search Filter Bar */}
-      <div className="bg-white rounded-xl p-3.5 border border-slate-200 shadow-xs flex items-center gap-3">
-        <Search className="w-4 h-4 text-slate-400" />
+      <div className="bg-white rounded-lg p-3 border border-[#D8E1EA] shadow-xs flex items-center gap-2.5">
+        <Search className="w-4 h-4 text-[#5E6B78]" />
         <input
           type="text"
-          placeholder="Search saved evaluations by food name, category, or recommended material..."
+          placeholder="Filter saved evaluations by commodity, category, or recommended structure..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-transparent text-xs text-slate-900 placeholder-slate-400 focus:outline-none"
+          className="w-full bg-transparent text-xs text-[#202B38] placeholder-slate-400 focus:outline-none"
         />
         {searchTerm && (
           <button
             onClick={() => setSearchTerm('')}
-            className="text-xs text-slate-500 hover:text-slate-800"
+            className="text-xs text-[#5E6B78] hover:text-[#17365D] cursor-pointer"
           >
             Clear
           </button>
@@ -113,14 +97,14 @@ export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
       </div>
 
       {/* History Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-lg border border-[#D8E1EA] shadow-xs overflow-hidden">
         {filteredRecs.length === 0 ? (
-          <div className="text-center py-14 text-slate-500 space-y-3">
+          <div className="text-center py-12 text-[#5E6B78] space-y-2.5">
             <Clock className="w-8 h-8 mx-auto text-slate-400" />
-            <p className="text-xs font-medium">No saved recommendations found.</p>
+            <p className="text-xs font-medium">No saved recommendation records found.</p>
             <button
               onClick={onNewEvaluation}
-              className="px-4 py-2 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-semibold hover:bg-emerald-100 transition-colors"
+              className="px-3.5 py-1.5 rounded-md bg-[#F4F7FA] text-[#17365D] border border-[#D8E1EA] text-xs font-semibold hover:bg-slate-200 transition-colors cursor-pointer"
             >
               Run an evaluation now
             </button>
@@ -128,54 +112,54 @@ export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-slate-50 text-slate-700 border-b border-slate-200">
+              <thead className="bg-[#F4F7FA] text-[#17365D] border-b border-[#D8E1EA]">
                 <tr>
-                  <th className="p-4 font-semibold">ID & Date</th>
-                  <th className="p-4 font-semibold">Commodity</th>
-                  <th className="p-4 font-semibold">Category</th>
-                  <th className="p-4 font-semibold">Storage & Temp</th>
-                  <th className="p-4 font-semibold">Shelf Life Target</th>
-                  <th className="p-4 font-semibold">Top Material</th>
-                  <th className="p-4 font-semibold">Score</th>
-                  <th className="p-4 font-semibold text-right">Actions</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px]">ID & Date</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px]">Commodity</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px]">Category</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px]">Storage & Temp</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px]">Target Life</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px]">Top Recommended Structure</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px]">Score</th>
+                  <th className="p-3 font-bold uppercase tracking-wider text-[11px] text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-[#D8E1EA] text-[#202B38]">
                 {filteredRecs.map((r) => (
                   <tr
                     key={r.id}
                     onClick={() => onViewRecommendation(r.id)}
-                    className="hover:bg-slate-50/80 transition-colors cursor-pointer group"
+                    className="hover:bg-[#F4F7FA] transition-colors cursor-pointer group"
                   >
-                    <td className="p-4 font-mono text-slate-500 text-[11px]">
+                    <td className="p-3 font-mono text-[#5E6B78] text-[11px]">
                       <div>#{r.id}</div>
                       <div className="text-[10px] text-slate-400">
                         {new Date(r.created_at).toLocaleDateString()}
                       </div>
                     </td>
-                    <td className="p-4 font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                    <td className="p-3 font-bold text-[#17365D] group-hover:underline">
                       {r.commodity_name}
                     </td>
-                    <td className="p-4 text-slate-600 capitalize">
+                    <td className="p-3 text-[#5E6B78] capitalize">
                       {r.commodity_category.replace(/_/g, ' ')}
                     </td>
-                    <td className="p-4">
+                    <td className="p-3">
                       <span className="capitalize">{r.storage_type}</span> ({r.storage_temp_c}°C)
                     </td>
-                    <td className="p-4">{r.target_shelf_life_days} days</td>
-                    <td className="p-4 text-emerald-800 font-semibold">
+                    <td className="p-3">{r.target_shelf_life_days} days</td>
+                    <td className="p-3 text-[#16834A] font-semibold">
                       {r.top_material_name || 'Evaluated'}
                     </td>
-                    <td className="p-4">
-                      <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 font-semibold text-xs border border-emerald-200">
+                    <td className="p-3">
+                      <span className="px-2 py-0.5 rounded bg-emerald-50 text-[#16834A] font-bold text-xs border border-emerald-200">
                         {r.top_score ? `${r.top_score}/100` : '--'}
                       </span>
                     </td>
-                    <td className="p-4 text-right">
-                      <div className="flex items-center justify-end gap-2" onClick={(e) => e.stopPropagation()}>
+                    <td className="p-3 text-right">
+                      <div className="flex items-center justify-end gap-1.5" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => onViewRecommendation(r.id)}
-                          className="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-800 text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1"
+                          className="px-2 py-1 rounded bg-[#F4F7FA] hover:bg-slate-200 text-[#17365D] border border-[#D8E1EA] text-[11px] font-semibold transition-colors cursor-pointer flex items-center gap-1"
                         >
                           <span>Inspect</span>
                           <ArrowRight className="w-3 h-3" />
@@ -183,7 +167,7 @@ export const SavedHistoryView: React.FC<SavedHistoryViewProps> = ({
                         <button
                           onClick={(e) => handleDelete(r.id, e)}
                           disabled={deletingId === r.id}
-                          className="p-1.5 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors cursor-pointer"
+                          className="p-1 rounded hover:bg-red-50 text-[#5E6B78] hover:text-red-600 transition-colors cursor-pointer"
                           title="Delete recommendation"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

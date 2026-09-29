@@ -1,16 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import {
   FlaskConical,
-  Sparkles,
-  Info,
+  RotateCcw,
   CheckCircle2,
   AlertCircle,
-  RotateCcw,
-  Package,
-  Thermometer,
-  Droplets,
-  Clock,
-  ArrowRight
+  Loader2,
+  ArrowRight,
+  Info
 } from 'lucide-react';
 import { FoodCommodity, RecommendationRequest } from '../types/api';
 
@@ -162,7 +158,7 @@ export const RecommendationWizard: React.FC<RecommendationWizardProps> = ({
     try {
       await onSubmit(formData);
     } catch (err: any) {
-      setValidationError(err.message || 'Failed to generate recommendation.');
+      setValidationError(err.message || 'Failed to generate packaging recommendation.');
     }
   };
 
@@ -174,65 +170,72 @@ export const RecommendationWizard: React.FC<RecommendationWizardProps> = ({
   ].includes(formData.commodity_category);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6 animate-fadeIn">
-      {/* Form Header */}
-      <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="max-w-4xl mx-auto space-y-5 animate-govFadeIn text-[#202B38]">
+      {/* Breadcrumbs */}
+      <div className="flex items-center gap-1.5 text-xs text-[#5E6B78]">
+        <span className="font-semibold text-[#17365D]">Portal</span>
+        <span>/</span>
+        <span>Recommendation Form</span>
+      </div>
+
+      {/* Form Title Card */}
+      <div className="bg-white rounded-lg p-5 border border-[#D8E1EA] shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">
-            Packaging Material Recommendation
+          <h1 className="text-xl font-bold text-[#17365D] tracking-tight">
+            Packaging Material Evaluation Form
           </h1>
-          <p className="text-xs text-slate-500 mt-0.5">
-            Fill in the product characteristics and environmental requirements to generate evaluated material options.
+          <p className="text-xs text-[#5E6B78] mt-0.5">
+            Fill in the food commodity details and target conditions to generate deterministic ASTM barrier recommendations.
           </p>
         </div>
 
         <button
           type="button"
           onClick={handleReset}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium border border-slate-200 transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#F4F7FA] hover:bg-slate-200 text-[#17365D] text-xs font-semibold border border-[#D8E1EA] transition-colors cursor-pointer"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
-          <span>Reset</span>
+          <RotateCcw className="w-3.5 h-3.5 text-[#245A81]" />
+          <span>Reset Form</span>
         </button>
       </div>
 
       {validationError && (
-        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2.5">
+        <div className="p-3.5 rounded-md bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2.5">
           <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
           <span>{validationError}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmitForm} className="space-y-6">
-        {/* Step 1: Commodity Selection & Chemical Profile */}
-        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-xs space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <form onSubmit={handleSubmitForm} className="space-y-4">
+        {/* SECTION A: Food Details */}
+        <div className="bg-white rounded-lg p-5 border border-[#D8E1EA] shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-[#D8E1EA] pb-2.5">
             <div className="flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center">
-                1
+              <span className="w-5 h-5 rounded bg-[#17365D] text-white text-xs font-bold flex items-center justify-center">
+                A
               </span>
-              <h2 className="font-bold text-sm text-slate-900">
-                Food Commodity & Properties
+              <h2 className="font-bold text-xs text-[#17365D] uppercase tracking-wide">
+                Food Details
               </h2>
             </div>
             {autoFilled && (
-              <span className="inline-flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-medium">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Auto-filled from Database
+              <span className="inline-flex items-center gap-1 text-[11px] px-2 py-0.5 rounded bg-emerald-50 text-[#16834A] border border-emerald-200 font-medium">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Database Calibrated
               </span>
             )}
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Quick Selection from Database
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Select from Verified Database
               </label>
               <select
                 value={selectedCommodityId || ''}
                 onChange={handleSearchSelect}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
               >
-                <option value="">-- Select a verified food commodity --</option>
+                <option value="">-- Choose commodity to auto-fill --</option>
                 {commodities.map((c) => (
                   <option key={c.id} value={c.id}>
                     {c.name} ({c.category.replace(/_/g, ' ')})
@@ -242,324 +245,358 @@ export const RecommendationWizard: React.FC<RecommendationWizardProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Commodity Name <span className="text-red-500">*</span>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Commodity Name <span className="text-red-600">*</span>
               </label>
               <input
                 type="text"
                 required
                 value={formData.commodity_name}
                 onChange={(e) => setFormData({ ...formData, commodity_name: e.target.value })}
-                placeholder="e.g., Roasted Coffee, Strawberries, Ghee"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                placeholder="e.g., Strawberry, Wheat Flour, Roasted Coffee"
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Commodity Category <span className="text-red-500">*</span>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Category
               </label>
               <select
                 value={formData.commodity_category}
                 onChange={(e) => setFormData({ ...formData, commodity_category: e.target.value })}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
               >
                 {CATEGORIES.map((cat) => (
                   <option key={cat} value={cat}>
-                    {cat.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
+                    {cat.replace(/_/g, ' ').toUpperCase()}
                   </option>
                 ))}
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Product Physical State
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Physical Product State
               </label>
               <select
                 value={formData.product_state}
                 onChange={(e) => setFormData({ ...formData, product_state: e.target.value })}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all capitalize"
               >
-                <option value="fresh">Fresh (Unprocessed)</option>
-                <option value="dried">Dried / Dehydrated</option>
+                <option value="fresh">Fresh / Perishable</option>
+                <option value="dried">Dried / Low Moisture</option>
                 <option value="frozen">Frozen</option>
-                <option value="liquid">Liquid / Semi-liquid</option>
-                <option value="cooked">Cooked / Pasteurized</option>
+                <option value="liquid">Liquid / Oil</option>
+                <option value="processed">Processed / Cooked</option>
               </select>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Target Shelf Life (Days) <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="number"
-                min="1"
-                max="1000"
-                required
-                value={formData.target_shelf_life_days}
-                onChange={(e) => setFormData({ ...formData, target_shelf_life_days: parseInt(e.target.value) || 1 })}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600"
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
                 Moisture Content (%)
               </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                max="100"
-                value={formData.moisture_content_pct !== null ? formData.moisture_content_pct : ''}
-                onChange={(e) => setFormData({ ...formData, moisture_content_pct: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="e.g. 14.5"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600"
-              />
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="100"
+                  value={formData.moisture_content_pct ?? ''}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      moisture_content_pct: e.target.value === '' ? null : parseFloat(e.target.value)
+                    })
+                  }
+                  placeholder="e.g., 2.0"
+                  className="w-full bg-white border border-[#D8E1EA] rounded-md pl-3 pr-8 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
+                />
+                <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5E6B78] text-xs pointer-events-none">
+                  %
+                </span>
+              </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Fat / Lipid Content (%)
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Fat Content (%)
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="100"
+                  value={formData.fat_content_pct ?? ''}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      fat_content_pct: e.target.value === '' ? null : parseFloat(e.target.value)
+                    })
+                  }
+                  placeholder="e.g., 33.0"
+                  className="w-full bg-white border border-[#D8E1EA] rounded-md pl-3 pr-8 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
+                />
+                <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5E6B78] text-xs pointer-events-none">
+                  %
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Acidity (pH Level)
               </label>
               <input
                 type="number"
                 step="0.1"
                 min="0"
-                max="100"
-                value={formData.fat_content_pct !== null ? formData.fat_content_pct : ''}
-                onChange={(e) => setFormData({ ...formData, fat_content_pct: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="e.g. 33.0"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                pH Level (1.0 - 14.0)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="1"
                 max="14"
-                value={formData.ph !== null ? formData.ph : ''}
-                onChange={(e) => setFormData({ ...formData, ph: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="e.g. 6.2"
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-600"
+                value={formData.ph ?? ''}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    ph: e.target.value === '' ? null : parseFloat(e.target.value)
+                  })
+                }
+                placeholder="e.g., 6.0"
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
               />
             </div>
-          </div>
 
-          {isRespiringCategory && (
-            <div className="p-3.5 bg-emerald-50 rounded-lg border border-emerald-200">
-              <label className="block text-xs font-semibold text-emerald-900 mb-1">
-                Produce Respiration Rate (mg CO₂/kg·h)
-              </label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                value={formData.respiration_rate !== null ? formData.respiration_rate : ''}
-                onChange={(e) => setFormData({ ...formData, respiration_rate: e.target.value ? parseFloat(e.target.value) : null })}
-                placeholder="Auto-calculated from produce type if left blank"
-                className="w-full sm:w-1/2 bg-white border border-emerald-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none"
-              />
-              <p className="text-[11px] text-emerald-700 mt-1">
-                Fresh produce requires breathable micro-perforated film or high-permeability polymers to avoid anaerobic fermentation.
-              </p>
-            </div>
-          )}
+            {isRespiringCategory && (
+              <div>
+                <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                  Respiration Rate (mg CO₂ / kg·h)
+                </label>
+                <div className="relative">
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    value={formData.respiration_rate ?? ''}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        respiration_rate: e.target.value === '' ? null : parseFloat(e.target.value)
+                      })
+                    }
+                    placeholder="e.g., 25.0"
+                    className="w-full bg-white border border-[#D8E1EA] rounded-md pl-3 pr-20 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
+                  />
+                  <span className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#5E6B78] text-[10px] pointer-events-none">
+                    mg CO₂/kg·h
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Step 2: Storage & Environmental Conditions */}
-        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-xs space-y-5">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center">
-              2
+        {/* SECTION B: Storage and Environmental Conditions */}
+        <div className="bg-white rounded-lg p-5 border border-[#D8E1EA] shadow-xs space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#D8E1EA] pb-2.5">
+            <span className="w-5 h-5 rounded bg-[#245A81] text-white text-xs font-bold flex items-center justify-center">
+              B
             </span>
-            <h2 className="font-bold text-sm text-slate-900">
-              Storage Regime & Environment
+            <h2 className="font-bold text-xs text-[#17365D] uppercase tracking-wide">
+              Storage & Environmental Conditions
             </h2>
           </div>
 
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-2">
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
                 Storage Regime
               </label>
-              <div className="flex flex-wrap gap-2">
-                {(['ambient', 'chilled', 'frozen'] as const).map((mode) => (
-                  <button
-                    key={mode}
-                    type="button"
-                    onClick={() => {
-                      let temp = 25.0;
-                      if (mode === 'chilled') temp = 4.0;
-                      if (mode === 'frozen') temp = -18.0;
-                      setFormData({ ...formData, storage_type: mode, storage_temp_c: temp });
-                    }}
-                    className={`px-4 py-2 rounded-lg text-xs font-semibold capitalize transition-all cursor-pointer ${
-                      formData.storage_type === mode
-                        ? 'bg-emerald-600 text-white shadow-xs'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
-                    }`}
-                  >
-                    {mode} ({mode === 'ambient' ? '25°C' : mode === 'chilled' ? '4°C' : '-18°C'})
-                  </button>
-                ))}
+              <select
+                value={formData.storage_type}
+                onChange={(e) => setFormData({ ...formData, storage_type: e.target.value })}
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all capitalize"
+              >
+                <option value="ambient">Ambient (15°C – 30°C)</option>
+                <option value="chilled">Chilled / Refrigerated (0°C – 8°C)</option>
+                <option value="frozen">Frozen (&lt; -18°C)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Storage Temperature (°C) <span className="text-red-600">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  step="0.5"
+                  required
+                  value={formData.storage_temp_c}
+                  onChange={(e) => setFormData({ ...formData, storage_temp_c: parseFloat(e.target.value) })}
+                  className="w-full bg-white border border-[#D8E1EA] rounded-md pl-3 pr-8 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
+                />
+                <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5E6B78] text-xs pointer-events-none">
+                  °C
+                </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-700 flex items-center gap-1.5">
-                    <Thermometer className="w-3.5 h-3.5 text-emerald-600" /> Storage Temperature
-                  </span>
-                  <span className="font-mono font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    {formData.storage_temp_c}°C ({((formData.storage_temp_c * 9) / 5 + 32).toFixed(0)}°F)
-                  </span>
-                </div>
+            <div>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Relative Humidity (%)
+              </label>
+              <div className="relative">
                 <input
-                  type="range"
-                  min="-30"
-                  max="50"
+                  type="number"
                   step="1"
-                  value={formData.storage_temp_c}
-                  onChange={(e) => setFormData({ ...formData, storage_temp_c: parseFloat(e.target.value) })}
-                  className="w-full accent-emerald-600 cursor-pointer"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-semibold text-slate-700 flex items-center gap-1.5">
-                    <Droplets className="w-3.5 h-3.5 text-blue-600" /> Relative Humidity (RH)
-                  </span>
-                  <span className="font-mono font-bold text-blue-800 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
-                    {formData.relative_humidity_pct}% RH
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min="10"
+                  min="0"
                   max="100"
-                  step="1"
                   value={formData.relative_humidity_pct}
                   onChange={(e) => setFormData({ ...formData, relative_humidity_pct: parseFloat(e.target.value) })}
-                  className="w-full accent-emerald-600 cursor-pointer"
+                  className="w-full bg-white border border-[#D8E1EA] rounded-md pl-3 pr-8 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
                 />
+                <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5E6B78] text-xs pointer-events-none">
+                  %
+                </span>
               </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Target Shelf Life (Days) <span className="text-red-600">*</span>
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  min="1"
+                  max="1095"
+                  required
+                  value={formData.target_shelf_life_days}
+                  onChange={(e) => setFormData({ ...formData, target_shelf_life_days: parseInt(e.target.value, 10) || 1 })}
+                  className="w-full bg-white border border-[#D8E1EA] rounded-md pl-3 pr-12 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
+                />
+                <span className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-[#5E6B78] text-xs pointer-events-none">
+                  days
+                </span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Transportation Conditions
+              </label>
+              <select
+                value={formData.transport_condition}
+                onChange={(e) => setFormData({ ...formData, transport_condition: e.target.value })}
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all capitalize"
+              >
+                <option value="normal">Normal / Standard Logistics</option>
+                <option value="refrigerated">Cold Chain / Insulated Reefer</option>
+                <option value="rough">Rough / Rural Road Transit</option>
+              </select>
             </div>
           </div>
         </div>
 
-        {/* Step 3: Optimization Priorities & Format */}
-        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-xs space-y-5">
-          <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-            <span className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold flex items-center justify-center">
-              3
+        {/* SECTION C: Budget and Sustainability Preferences */}
+        <div className="bg-white rounded-lg p-5 border border-[#D8E1EA] shadow-xs space-y-4">
+          <div className="flex items-center gap-2 border-b border-[#D8E1EA] pb-2.5">
+            <span className="w-5 h-5 rounded bg-[#16834A] text-white text-xs font-bold flex items-center justify-center">
+              C
             </span>
-            <h2 className="font-bold text-sm text-slate-900">
-              Optimization Preferences & Format
+            <h2 className="font-bold text-xs text-[#17365D] uppercase tracking-wide">
+              Budget & Sustainability Preferences
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Cost Tier Preference
-              </label>
-              <select
-                value={formData.cost_tier}
-                onChange={(e) => setFormData({ ...formData, cost_tier: e.target.value as any })}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"
-              >
-                <option value="economy">Economy (Budget-Focused)</option>
-                <option value="balanced">Balanced (Cost & Quality)</option>
-                <option value="premium">Premium (Maximum Barrier)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Sustainability Priority
-              </label>
-              <select
-                value={formData.sustainability_priority}
-                onChange={(e) => setFormData({ ...formData, sustainability_priority: e.target.value as any })}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"
-              >
-                <option value="low">Standard / Conventional</option>
-                <option value="medium">Medium (Recyclability Preferred)</option>
-                <option value="high">High (Bio-based / Biodegradable)</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Package Format
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Packaging Format
               </label>
               <select
                 value={formData.package_format}
                 onChange={(e) => setFormData({ ...formData, package_format: e.target.value })}
-                className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-600"
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all capitalize"
               >
-                <option value="pouch">Pouch / Sachet</option>
-                <option value="tray">Rigid / Semi-Rigid Tray</option>
-                <option value="vacuum_skin">Vacuum Skin Pack</option>
-                <option value="thermoform">Thermoformed Cup/Blister</option>
-                <option value="bag_in_box">Bag-in-Box</option>
+                <option value="pouch">Flexible Pouch / Pillow Bag</option>
+                <option value="standup_pouch">Stand-up Barrier Pouch</option>
+                <option value="tray_lidded">Rigid Tray with Lidding Film</option>
+                <option value="vacuum_skin">Vacuum Skin Packaging (VSP)</option>
+                <option value="bottle">Bottle / Jar Container</option>
+                <option value="carton">Aseptic Carton / Brick</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Cost Tier Preference
+              </label>
+              <select
+                value={formData.cost_tier}
+                onChange={(e) => setFormData({ ...formData, cost_tier: e.target.value })}
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all capitalize"
+              >
+                <option value="economy">Economy (Lowest Unit Cost)</option>
+                <option value="balanced">Balanced Cost & Performance</option>
+                <option value="premium">Premium Barrier (High Protection)</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Sustainability Priority
+              </label>
+              <select
+                value={formData.sustainability_priority}
+                onChange={(e) => setFormData({ ...formData, sustainability_priority: e.target.value })}
+                className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all capitalize"
+              >
+                <option value="standard">Standard Conventional Polymers</option>
+                <option value="medium">Recyclable Monomaterial Priority</option>
+                <option value="high_biodegradable">Bio-based / Compostable Priority</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Specific Requirements or Notes (Optional)
+            <label className="block text-xs font-semibold text-[#202B38] mb-1">
+              Additional Engineering Notes (Optional)
             </label>
-            <textarea
-              rows={2}
+            <input
+              type="text"
               value={formData.user_notes || ''}
               onChange={(e) => setFormData({ ...formData, user_notes: e.target.value })}
-              placeholder="e.g. Export shipment via sea freight; requires puncture resistance against sharp edges."
-              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-emerald-600"
+              placeholder="e.g., Sensitive to lipid oxidation; requires nitrogen flushing capability"
+              className="w-full bg-white border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
             />
           </div>
         </div>
 
-        {/* Submit Action */}
+        {/* Form Submission Actions */}
         <div className="flex items-center justify-end gap-3 pt-2">
           <button
             type="button"
             onClick={handleReset}
-            className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-md bg-white hover:bg-[#F4F7FA] text-[#17365D] border border-[#D8E1EA] text-xs font-semibold transition-colors cursor-pointer"
           >
-            Cancel
+            Reset Fields
           </button>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="flex items-center gap-2 px-7 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white font-semibold text-xs shadow-sm transition-all hover:shadow cursor-pointer"
+            className="flex items-center gap-2 px-6 py-2 rounded-md bg-[#16834A] hover:bg-[#136f3e] disabled:opacity-60 text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
           >
             {isLoading ? (
               <>
-                <Sparkles className="w-4 h-4 animate-spin" />
-                <span>Evaluating Barrier Kinetics...</span>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Evaluating ASTM Barrier Models...</span>
               </>
             ) : (
               <>
                 <FlaskConical className="w-4 h-4" />
-                <span>Generate Recommendations</span>
-                <ArrowRight className="w-4 h-4 ml-1" />
+                <span>Generate Recommendation</span>
+                <ArrowRight className="w-3.5 h-3.5" />
               </>
             )}
           </button>

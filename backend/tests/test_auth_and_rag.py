@@ -1,4 +1,5 @@
 import pytest
+import uuid
 from fastapi.testclient import TestClient
 from app.main import app
 from app.database import Base, engine, SessionLocal
@@ -151,9 +152,10 @@ def test_rag_ai_chat_endpoint():
     assert unauth_res.status_code == 401
 
     # Register/login user for authenticated chat
+    unique_email = f"rag_tester_{uuid.uuid4().hex[:8]}@packsci.ai"
     auth_res = client.post("/api/v1/auth/register", json={
         "name": "RAG Chat User",
-        "email": "rag_tester@packsci.ai",
+        "email": unique_email,
         "password": "SecurePassword123!",
         "confirm_password": "SecurePassword123!"
     })

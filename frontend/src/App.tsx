@@ -20,7 +20,7 @@ import {
   SystemHealth,
   User
 } from './types/api';
-import { AlertCircle, CheckCircle2, FlaskConical } from 'lucide-react';
+import { AlertCircle, CheckCircle2, FlaskConical, Loader2 } from 'lucide-react';
 
 export function App() {
   // Authentication & Public View State
@@ -79,7 +79,6 @@ export function App() {
         } else if (hash === 'register') {
           setPublicView('register');
         } else if (['home', 'wizard', 'ai-assistant', 'comparison', 'history', 'ingest'].includes(hash)) {
-          // Protected route accessed directly while unauthenticated -> save target & redirect to login
           setPendingRedirect(hash);
           setPublicView('login');
         } else {
@@ -146,7 +145,7 @@ export function App() {
   // Handle successful login or registration
   const handleAuthSuccess = (user: User) => {
     setCurrentUser(user);
-    showNotification('success', `Welcome, ${user.name}!`);
+    showNotification('success', `Signed in as ${user.name}`);
 
     // Redirect to requested protected view or default to home/dashboard
     const target = pendingRedirect && ['home', 'wizard', 'ai-assistant', 'comparison', 'history', 'ingest'].includes(pendingRedirect)
@@ -176,7 +175,7 @@ export function App() {
       setActiveRecommendationResult(null);
       setSavedRecs([]);
       window.location.hash = '';
-      showNotification('success', 'You have been signed out successfully.');
+      showNotification('success', 'You have been signed out.');
     }
   };
 
@@ -247,10 +246,10 @@ export function App() {
   // Initial Auth Loading Screen
   if (isAuthChecking) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-3 border-emerald-600 border-t-transparent rounded-full animate-spin" />
-          <span className="text-xs font-semibold text-slate-500">Loading PackSci AI...</span>
+      <div className="min-h-screen bg-[#F4F7FA] flex items-center justify-center text-[#202B38]">
+        <div className="flex flex-col items-center gap-2.5">
+          <Loader2 className="w-7 h-7 text-[#16834A] animate-spin" />
+          <span className="text-xs font-semibold text-[#17365D]">Loading PackSci AI Portal...</span>
         </div>
       </div>
     );
@@ -262,18 +261,18 @@ export function App() {
   // ==========================================
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col justify-between">
+      <div className="min-h-screen bg-[#F4F7FA] text-[#202B38] font-sans flex flex-col justify-between">
         {/* Floating Notification Toast */}
         {notification && (
           <div
-            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-xs font-semibold animate-slideUp ${
+            className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-3.5 py-2.5 rounded-md shadow-md border text-xs font-semibold animate-govFadeIn ${
               notification.type === 'success'
-                ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
-                : 'bg-red-50 border-red-300 text-red-800'
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                : 'bg-red-50 border-red-300 text-red-900'
             }`}
           >
             {notification.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-[#16834A] shrink-0" />
             ) : (
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
             )}
@@ -329,7 +328,7 @@ export function App() {
   // AUTHENTICATED APPLICATION INTERFACE
   // ==========================================
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#F4F7FA] text-[#202B38] flex flex-col font-sans">
       <Navbar
         activeTab={activeTab}
         setActiveTab={handleTabChange}
@@ -347,14 +346,14 @@ export function App() {
       {/* Floating Notification Toast */}
       {notification && (
         <div
-          className={`fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg border text-xs font-semibold animate-slideUp ${
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-2 px-3.5 py-2.5 rounded-md shadow-md border text-xs font-semibold animate-govFadeIn ${
             notification.type === 'success'
-              ? 'bg-emerald-50 border-emerald-300 text-emerald-800'
-              : 'bg-red-50 border-red-300 text-red-800'
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+              : 'bg-red-50 border-red-300 text-red-900'
           }`}
         >
           {notification.type === 'success' ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-4 h-4 text-[#16834A] shrink-0" />
           ) : (
             <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
           )}
@@ -363,7 +362,7 @@ export function App() {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'home' && (
           <DashboardView
             commodities={commodities}
@@ -430,33 +429,33 @@ export function App() {
               onCompareMaterials={handleCompareMaterials}
             />
           ) : (
-            <div className="text-center py-16 bg-white rounded-2xl border border-slate-200 shadow-xs space-y-3">
-              <FlaskConical className="w-10 h-10 mx-auto text-slate-400" />
-              <h2 className="text-sm font-bold text-slate-800">No active recommendation evaluation</h2>
-              <p className="text-xs text-slate-500">Run the recommendation wizard or choose a saved evaluation to view results.</p>
+            <div className="text-center py-14 bg-white rounded-lg border border-[#D8E1EA] shadow-xs space-y-2.5">
+              <FlaskConical className="w-8 h-8 mx-auto text-[#5E6B78]" />
+              <h2 className="text-xs font-bold text-[#17365D]">No active evaluation loaded</h2>
+              <p className="text-[11px] text-[#5E6B78]">Run the recommendation form or choose a saved evaluation to view results.</p>
               <button
                 onClick={() => {
                   setActiveTab('wizard');
                   window.location.hash = 'wizard';
                 }}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-colors cursor-pointer"
+                className="px-3.5 py-1.5 rounded-md bg-[#16834A] hover:bg-[#136f3e] text-white text-xs font-semibold transition-colors cursor-pointer"
               >
-                Launch Recommendation Wizard
+                Launch Evaluation Form
               </button>
             </div>
           )
         )}
       </main>
 
-      {/* Authenticated Clean Footer */}
-      <footer className="border-t border-slate-200 bg-white py-6 text-center text-xs text-slate-500 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      {/* Authenticated Public-Sector Footer */}
+      <footer className="border-t border-[#D8E1EA] bg-white py-4 text-center text-xs text-[#5E6B78] mt-auto">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px]">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-800">PackSci AI</span>
+            <span className="font-bold text-[#17365D]">PackSci AI</span>
             <span>•</span>
-            <span>Intelligent Food Packaging Material Recommendation System</span>
+            <span>AI-Based Intelligent Food Packaging Material Recommendation System for Food Commodities</span>
           </div>
-          <div className="text-[11px] text-slate-500">
+          <div className="text-slate-400">
             Validated against USDA FoodData Central, UC Davis Postharvest, and ASTM Barrier Standards.
           </div>
         </div>

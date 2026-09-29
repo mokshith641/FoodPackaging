@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Package,
+  PackageCheck,
   User as UserIcon,
   Mail,
   Lock,
@@ -42,7 +42,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
     if (pass.length >= 8) score += 1;
     if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score += 1;
     if (/\d/.test(pass) || /[^A-Za-z0-9]/.test(pass)) score += 1;
-    return score; // 0 to 4
+    return score;
   };
 
   const strength = getPasswordStrength(password);
@@ -55,9 +55,9 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
       case 2:
         return { label: 'Fair', color: 'bg-amber-500', text: 'text-amber-600' };
       case 3:
-        return { label: 'Good', color: 'bg-blue-500', text: 'text-blue-600' };
+        return { label: 'Good', color: 'bg-[#245A81]', text: 'text-[#245A81]' };
       case 4:
-        return { label: 'Strong', color: 'bg-emerald-600', text: 'text-emerald-600' };
+        return { label: 'Strong', color: 'bg-[#16834A]', text: 'text-[#16834A]' };
       default:
         return { label: 'Weak', color: 'bg-slate-300', text: 'text-slate-400' };
     }
@@ -112,115 +112,115 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
   };
 
   return (
-    <div className="min-h-[85vh] flex flex-col justify-between py-8 px-4 sm:px-6 lg:px-8 animate-fadeIn">
+    <div className="min-h-screen bg-[#F4F7FA] flex flex-col justify-between py-8 px-4 sm:px-6 lg:px-8 text-[#202B38] animate-govFadeIn">
       {/* Top navigation */}
       <div className="max-w-md w-full mx-auto flex items-center justify-between">
         <button
           onClick={onNavigateToHome}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#245A81] hover:text-[#17365D] transition-colors cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>Back to Home</span>
         </button>
 
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-emerald-600 flex items-center justify-center text-white shadow-xs">
-            <Package className="w-4 h-4" />
+          <div className="w-6 h-6 rounded-md bg-[#17365D] flex items-center justify-center text-white shadow-xs">
+            <PackageCheck className="w-3.5 h-3.5 text-emerald-400" />
           </div>
-          <span className="font-bold text-sm text-slate-900">PackSci AI</span>
+          <span className="font-bold text-xs text-[#17365D]">PackSci AI</span>
         </div>
       </div>
 
       {/* Main Register Card */}
       <div className="max-w-md w-full mx-auto my-auto">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Create Account</h1>
-            <p className="text-xs text-slate-500 mt-1">
-              Join PackSci AI for tailored packaging material intelligence
+        <div className="gov-card p-6 sm:p-8 bg-white border border-[#D8E1EA]">
+          <div className="border-b border-[#D8E1EA] pb-4 mb-5 text-center">
+            <h1 className="text-xl font-bold text-[#17365D] tracking-tight">Create User Account</h1>
+            <p className="text-xs text-[#5E6B78] mt-1">
+              Register for academic or enterprise food packaging decision tools
             </p>
           </div>
 
           {error && (
-            <div className="mb-5 p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-start gap-2.5 text-xs text-red-700">
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md flex items-start gap-2.5 text-xs text-red-800">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Full Name
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Full Name <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5E6B78]">
                   <UserIcon className="w-4 h-4" />
                 </div>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g., Dr. Sarah Jenkins"
+                  placeholder="e.g., Rajesh Kumar"
                   autoComplete="name"
                   required
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:bg-white transition-all"
+                  className="w-full pl-9 pr-3 py-2 bg-white border border-[#D8E1EA] rounded-md text-xs text-[#202B38] placeholder:text-slate-400 focus:outline-none focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Email Address
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Email Address <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5E6B78]">
                   <Mail className="w-4 h-4" />
                 </div>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@example.com"
+                  placeholder="name@organization.com"
                   autoComplete="email"
                   required
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:bg-white transition-all"
+                  className="w-full pl-9 pr-3 py-2 bg-white border border-[#D8E1EA] rounded-md text-xs text-[#202B38] placeholder:text-slate-400 focus:outline-none focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Password
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Password <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5E6B78]">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="At least 6 characters"
+                  placeholder="Minimum 6 characters"
                   autoComplete="new-password"
                   required
-                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-600 focus:bg-white transition-all"
+                  className="w-full pl-9 pr-9 py-2 bg-white border border-[#D8E1EA] rounded-md text-xs text-[#202B38] placeholder:text-slate-400 focus:outline-none focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5E6B78] hover:text-[#202B38] cursor-pointer"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
 
-              {/* Password strength indicator */}
+              {/* Password strength bar */}
               {password.length > 0 && (
-                <div className="mt-2 space-y-1">
+                <div className="mt-1.5 space-y-1">
                   <div className="flex items-center justify-between text-[11px]">
-                    <span className="text-slate-500">Password strength:</span>
+                    <span className="text-[#5E6B78]">Strength:</span>
                     <span className={`font-semibold ${getStrengthLabel(strength).text}`}>
                       {getStrengthLabel(strength).label}
                     </span>
@@ -229,7 +229,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                     {[1, 2, 3, 4].map((step) => (
                       <div
                         key={step}
-                        className={`h-full flex-1 transition-all duration-300 ${
+                        className={`h-full flex-1 transition-all duration-200 ${
                           strength >= step ? getStrengthLabel(strength).color : 'bg-slate-200'
                         }`}
                       />
@@ -240,11 +240,11 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Confirm Password
+              <label className="block text-xs font-semibold text-[#202B38] mb-1">
+                Confirm Password <span className="text-red-600">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#5E6B78]">
                   <Lock className="w-4 h-4" />
                 </div>
                 <input
@@ -254,18 +254,18 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
                   placeholder="Re-enter password"
                   autoComplete="new-password"
                   required
-                  className={`w-full pl-10 pr-10 py-2.5 bg-slate-50 border rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:bg-white transition-all ${
+                  className={`w-full pl-9 pr-9 py-2 bg-white border rounded-md text-xs text-[#202B38] placeholder:text-slate-400 focus:outline-none transition-all ${
                     confirmPassword && confirmPassword !== password
                       ? 'border-red-300 focus:border-red-500'
                       : confirmPassword && confirmPassword === password
-                      ? 'border-emerald-500 focus:border-emerald-600'
-                      : 'border-slate-300 focus:border-emerald-600'
+                      ? 'border-[#16834A] focus:border-[#16834A]'
+                      : 'border-[#D8E1EA] focus:border-[#245A81]'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#5E6B78] hover:text-[#202B38] cursor-pointer"
                   tabIndex={-1}
                 >
                   {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -273,7 +273,7 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
               </div>
 
               {confirmPassword.length > 0 && confirmPassword === password && (
-                <div className="mt-1 flex items-center gap-1 text-[11px] text-emerald-600 font-medium">
+                <div className="mt-1 flex items-center gap-1 text-[11px] text-[#16834A] font-medium">
                   <CheckCircle2 className="w-3.5 h-3.5" />
                   <span>Passwords match</span>
                 </div>
@@ -283,12 +283,12 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-2 flex items-center justify-center gap-2 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white text-xs font-bold rounded-xl shadow-xs transition-colors cursor-pointer"
+              className="w-full mt-2 flex items-center justify-center gap-2 py-2 px-4 bg-[#16834A] hover:bg-[#136f3e] disabled:opacity-60 text-white text-xs font-bold rounded-md shadow-xs transition-colors cursor-pointer"
             >
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Creating Account...</span>
+                  <span>Registering...</span>
                 </>
               ) : (
                 <>
@@ -299,13 +299,13 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
             </button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-            <p className="text-xs text-slate-600">
-              Already have an account?{' '}
+          <div className="mt-5 pt-4 border-t border-[#D8E1EA] text-center">
+            <p className="text-xs text-[#5E6B78]">
+              Already registered?{' '}
               <button
                 type="button"
                 onClick={onNavigateToLogin}
-                className="font-bold text-emerald-600 hover:text-emerald-700 hover:underline cursor-pointer"
+                className="font-semibold text-[#245A81] hover:text-[#17365D] hover:underline cursor-pointer"
               >
                 Sign In
               </button>
@@ -315,8 +315,8 @@ export const RegisterPage: React.FC<RegisterPageProps> = ({
       </div>
 
       {/* Public Footer */}
-      <footer className="max-w-md w-full mx-auto text-center text-[11px] text-slate-400 pt-4">
-        <span>PackSci AI Secure Authentication</span>
+      <footer className="max-w-md w-full mx-auto text-center text-[11px] text-[#5E6B78] pt-4">
+        <span>PackSci AI • Secure Academic Research Portal</span>
       </footer>
     </div>
   );
