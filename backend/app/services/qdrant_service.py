@@ -244,6 +244,13 @@ class QdrantService:
             return []
 
         cls.ensure_collection()
+        try:
+            col_info = client.get_collection(collection_name=settings.QDRANT_COLLECTION_NAME)
+            if getattr(col_info, "points_count", 0) == 0:
+                cls.seed_initial_knowledge()
+        except Exception as e:
+            logger.debug(f"Collection count inspection notice: {e}")
+
         query_vector = cls.generate_embedding(query)
 
         try:

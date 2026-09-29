@@ -17,10 +17,7 @@ class RAGAssistantService:
         db: Session,
         focus_commodity_id: Optional[int] = None
     ) -> Dict[str, Any]:
-        # 1. Retrieve relevant scientific literature from Qdrant Vector DB
-        retrieved_chunks = QdrantService.search(query=question, top_k=4)
-
-        # 2. Extract database entities if mentioned in question or explicitly provided
+        # 1. Extract database entities if mentioned in question or explicitly provided
         db_context = []
         target_commodity = None
         if focus_commodity_id:
@@ -41,6 +38,10 @@ class RAGAssistantService:
                 f"- Optimal Temp: {target_commodity.optimal_temp_c}°C | Default Storage: {target_commodity.default_storage_type}\n"
                 f"- Base Shelf Life: {target_commodity.base_shelf_life_days} days"
             )
+
+        # 2. Retrieve relevant scientific literature from Qdrant Vector DB with enhanced context
+        search_query = f"{question} {target_commodity.name} {target_commodity.category}" if target_commodity else question
+        retrieved_chunks = QdrantService.search(query=search_query, top_k=4)
 
         # Check if materials are mentioned (e.g. LDPE, PET, EVOH, PLA, Met-BOPP, Aluminum)
         all_materials = db.query(PackagingMaterial).all()

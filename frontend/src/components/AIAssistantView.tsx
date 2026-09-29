@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Bot,
   Send,
@@ -10,7 +10,10 @@ import {
   BookOpen,
   ExternalLink,
   Loader2,
-  Layers
+  Layers,
+  Sparkles,
+  User as UserIcon,
+  RefreshCw
 } from 'lucide-react';
 import { FoodCommodity, PackagingMaterial, SourceCitation } from '../types/api';
 import { api } from '../services/api';
@@ -30,6 +33,7 @@ interface Message {
   databaseMatches?: number;
   modelName?: string;
   isError?: boolean;
+  failedQuery?: string;
 }
 
 export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
@@ -39,15 +43,18 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
 }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
-      id: '1',
+      id: 'welcome',
       sender: 'assistant',
-      text: 'Welcome to the PackSci AI Technical Assistant. I provide scientific recommendations grounded in ASTM standards, equilibrium modified atmosphere packaging (EMAP), and polymer barrier data.\n\nYou can query food-packaging compatibility, degradation kinetics, barrier metrics (OTR/WVTR), or comparative material selection.',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      text: `**Welcome to the PackSci AI Technical Assistant.**\n\nI provide scientific food packaging guidance grounded in ASTM standard barrier data (OTR/WVTR), equilibrium modified atmosphere packaging (EMAP), and polymer material science.\n\nAsk about packaging recommendations for specific food commodities, degradation kinetics, barrier metrics, or comparative material evaluations.`,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      modelName: 'qwen/qwen3.8-27b'
     }
   ]);
   const [inputText, setInputText] = useState('');
   const [selectedCommodityId, setSelectedCommodityId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const suggestedQuestions = [
     'What packaging is suitable for wheat flour?',
@@ -57,13 +64,19 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
     'Which packaging materials are suitable for fresh strawberries?'
   ];
 
+  // Auto-scroll to latest message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isLoading]);
+
   const handleSendMessage = async (queryText: string) => {
-    if (!queryText.trim() || isLoading) return;
+    const trimmed = queryText.trim();
+    if (!trimmed || isLoading) return;
 
     const userMsg: Message = {
-      id: Date.now().toString(),
+      id: `user-${Date.now()}`,
       sender: 'user',
-      text: queryText,
+      text: trimmed,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
@@ -73,12 +86,12 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
 
     try {
       const response = await api.chatAssistant({
-        question: queryText,
+        question: trimmed,
         focus_commodity_id: selectedCommodityId
       });
 
       const assistantMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `assistant-${Date.now()}`,
         sender: 'assistant',
         text: response.answer,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
@@ -90,27 +103,111 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
       setMessages((prev) => [...prev, assistantMsg]);
     } catch (err: any) {
       const errorMsg: Message = {
-        id: (Date.now() + 1).toString(),
+        id: `error-${Date.now()}`,
         sender: 'assistant',
-        text: `Unable to retrieve answer: ${err.message || 'Check backend service connectivity.'} Please try again.`,
+        text: `Unable to complete request: ${err.message || 'Network or backend service unavailable.'}`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        isError: true
+        isError: true,
+        failedQuery: trimmed
       };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setIsLoading(false);
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 50);
     }
   };
 
+  const handleRetry = (failedText: string) => {
+    handleSendMessage(failedText);
+  };
+
   const handleResetChat = () => {
-    setMessages([
-      {
-        id: Date.now().toString(),
-        sender: 'assistant',
-        text: 'Chat session reset. How can I assist you with food packaging science today?',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    if (confirm('Clear the current conversation thread?')) {
+      setMessages([
+        {
+          id: `welcome-${Date.now()}`,
+          sender: 'assistant',
+          text: `Conversation cleared. How can I assist you with food packaging materials or barrier modeling today?`,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }
+      ]);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(inputText);
+    }
+  };
+
+  // Helper to format assistant markdown response with basic headings, bold, bullet points
+  const renderFormattedText = (rawText: string) => {
+    const lines = rawText.split('\n');
+    return (
+      <div className="space-y-1.5">
+        {lines.map((line, idx) => {
+          const trimmed = line.trim();
+          if (!trimmed) {
+            return <div key={idx} className="h-1.5" />;
+          }
+          if (trimmed.startsWith('### ')) {
+            return (
+              <h4 key={idx} className="text-xs font-bold text-[#17365D] mt-2 mb-1">
+                {trimmed.replace('### ', '')}
+              </h4>
+            );
+          }
+          if (trimmed.startsWith('## ')) {
+            return (
+              <h3 key={idx} className="text-sm font-bold text-[#17365D] mt-2.5 mb-1">
+                {trimmed.replace('## ', '')}
+              </h3>
+            );
+          }
+          if (trimmed.startsWith('# ')) {
+            return (
+              <h2 key={idx} className="text-sm font-extrabold text-[#17365D] mt-3 mb-1">
+                {trimmed.replace('# ', '')}
+              </h2>
+            );
+          }
+          if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+            const content = trimmed.substring(2);
+            return (
+              <div key={idx} className="flex items-start gap-2 pl-1.5 my-0.5">
+                <span className="text-[#16834A] font-bold text-xs leading-tight mt-0.5">•</span>
+                <span className="flex-1">{formatInlineBold(content)}</span>
+              </div>
+            );
+          }
+          if (/^\d+\.\s/.test(trimmed)) {
+            const match = trimmed.match(/^(\d+\.)\s(.*)$/);
+            return (
+              <div key={idx} className="flex items-start gap-2 pl-1.5 my-0.5">
+                <span className="text-[#245A81] font-bold text-[11px] shrink-0 mt-0.5">
+                  {match ? match[1] : '1.'}
+                </span>
+                <span className="flex-1">{formatInlineBold(match ? match[2] : trimmed)}</span>
+              </div>
+            );
+          }
+          return <p key={idx} className="leading-relaxed">{formatInlineBold(line)}</p>;
+        })}
+      </div>
+    );
+  };
+
+  const formatInlineBold = (text: string) => {
+    const parts = text.split(/(\*\*.*?\*\*)/g);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-semibold text-[#17365D]">{part.slice(2, -2)}</strong>;
       }
-    ]);
+      return part;
+    });
   };
 
   return (
@@ -148,16 +245,16 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
         </button>
       </div>
 
-      {/* Commodity Filter Strip */}
-      <div className="bg-white rounded-lg p-3 border border-[#D8E1EA] shadow-xs flex items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-2 text-[#5E6B78]">
+      {/* Commodity Context Selector */}
+      <div className="bg-white rounded-lg p-3 border border-[#D8E1EA] shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
+        <div className="flex items-center gap-2 text-[#5E6B78] shrink-0">
           <FlaskConical className="w-3.5 h-3.5 text-[#245A81]" />
-          <span className="font-semibold text-[#17365D]">Focus Context:</span>
+          <span className="font-semibold text-[#17365D]">Focus Commodity Context:</span>
         </div>
         <select
           value={selectedCommodityId || ''}
           onChange={(e) => setSelectedCommodityId(e.target.value ? parseInt(e.target.value, 10) : null)}
-          className="bg-[#F4F7FA] border border-[#D8E1EA] rounded-md px-2.5 py-1 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all"
+          className="bg-[#F4F7FA] border border-[#D8E1EA] rounded-md px-3 py-1.5 text-xs text-[#202B38] focus:border-[#245A81] focus:ring-1 focus:ring-[#245A81] transition-all max-w-full sm:max-w-md"
         >
           <option value="">General Packaging & Barrier Science (All Commodities)</option>
           {commodities.map((c) => (
@@ -169,21 +266,26 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
       </div>
 
       {/* Suggested Quick Questions */}
-      <div className="flex flex-wrap items-center gap-1.5 pt-1">
-        <span className="text-[11px] font-bold text-[#5E6B78] mr-1">Suggested:</span>
-        {suggestedQuestions.map((q, idx) => (
-          <button
-            key={idx}
-            onClick={() => handleSendMessage(q)}
-            className="text-[11px] px-2.5 py-1 rounded bg-white hover:bg-[#F4F7FA] text-[#245A81] hover:text-[#17365D] border border-[#D8E1EA] shadow-xs transition-colors cursor-pointer"
-          >
-            {q}
-          </button>
-        ))}
+      <div className="space-y-1.5">
+        <div className="text-[11px] font-bold text-[#5E6B78] uppercase tracking-wide">
+          Suggested Technical Questions:
+        </div>
+        <div className="flex flex-wrap items-center gap-1.5">
+          {suggestedQuestions.map((q, idx) => (
+            <button
+              key={idx}
+              onClick={() => handleSendMessage(q)}
+              disabled={isLoading}
+              className="text-[11px] px-2.5 py-1 rounded bg-white hover:bg-[#F4F7FA] text-[#245A81] hover:text-[#17365D] border border-[#D8E1EA] shadow-xs transition-colors cursor-pointer disabled:opacity-50 text-left"
+            >
+              {q}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Messages Thread Container */}
-      <div className="bg-white rounded-lg border border-[#D8E1EA] shadow-xs p-4 sm:p-5 space-y-4 min-h-[380px] max-h-[550px] overflow-y-auto">
+      <div className="bg-white rounded-lg border border-[#D8E1EA] shadow-xs p-4 sm:p-5 space-y-4 min-h-[420px] max-h-[580px] overflow-y-auto">
         {messages.map((msg) => {
           const isUser = msg.sender === 'user';
           return (
@@ -200,7 +302,7 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
               )}
 
               <div
-                className={`rounded-lg p-3.5 max-w-[85%] space-y-2 border ${
+                className={`rounded-lg p-3.5 max-w-[88%] sm:max-w-[82%] space-y-2 border ${
                   isUser
                     ? 'bg-[#17365D] text-white border-[#17365D]'
                     : msg.isError
@@ -208,28 +310,58 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
                     : 'bg-[#F4F7FA] text-[#202B38] border-[#D8E1EA]'
                 }`}
               >
-                <div className="whitespace-pre-line text-xs font-normal">{msg.text}</div>
+                {isUser ? (
+                  <p className="whitespace-pre-line text-xs font-medium">{msg.text}</p>
+                ) : (
+                  <div className="text-xs">{renderFormattedText(msg.text)}</div>
+                )}
 
-                {/* Qdrant Source Citations */}
+                {/* Error Retry Option */}
+                {msg.isError && msg.failedQuery && (
+                  <div className="pt-2">
+                    <button
+                      onClick={() => handleRetry(msg.failedQuery!)}
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white hover:bg-red-50 text-red-700 text-[11px] font-semibold rounded border border-red-300 transition-colors cursor-pointer"
+                    >
+                      <RefreshCw className="w-3 h-3" />
+                      <span>Retry Request</span>
+                    </button>
+                  </div>
+                )}
+
+                {/* Qdrant Retrieved Source Citations */}
                 {msg.sources && msg.sources.length > 0 && (
-                  <div className="pt-2.5 border-t border-[#D8E1EA] space-y-1.5 mt-2">
+                  <div className="pt-2.5 border-t border-[#D8E1EA] space-y-2 mt-2">
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#245A81] uppercase tracking-wide">
                       <BookOpen className="w-3 h-3 text-[#16834A]" />
-                      <span>Retrieved Literature Sources ({msg.sources.length})</span>
+                      <span>Retrieved Qdrant Literature ({msg.sources.length})</span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       {msg.sources.map((src, i) => (
                         <div
                           key={i}
-                          className="p-2 bg-white rounded border border-[#D8E1EA] text-[10px] space-y-0.5"
+                          className="p-2 bg-white rounded border border-[#D8E1EA] text-[10px] space-y-1 shadow-2xs"
                         >
-                          <div className="font-semibold text-[#17365D] line-clamp-1">
-                            {src.title}
+                          <div className="font-bold text-[#17365D] line-clamp-1">
+                            [{src.source_id}] {src.title}
                           </div>
-                          <p className="text-[#5E6B78] line-clamp-2">{src.snippet}</p>
-                          <div className="text-[#16834A] font-semibold text-[9px]">
-                            Relevance: {Math.round(src.relevance_score * 100)}%
+                          <p className="text-[#5E6B78] line-clamp-2 leading-tight">{src.snippet}</p>
+                          <div className="flex items-center justify-between text-[9px] pt-0.5 border-t border-slate-100">
+                            <span className="text-[#16834A] font-semibold">
+                              Relevance: {Math.round(src.relevance_score * 100)}%
+                            </span>
+                            {src.url && (
+                              <a
+                                href={src.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-[#245A81] hover:underline flex items-center gap-0.5"
+                              >
+                                <span>Ref</span>
+                                <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -244,10 +376,16 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
                 >
                   <span>{msg.timestamp}</span>
                   {msg.modelName && (
-                    <span>Model: {msg.modelName}</span>
+                    <span className="font-mono text-[9px]">{msg.modelName}</span>
                   )}
                 </div>
               </div>
+
+              {isUser && (
+                <div className="w-7 h-7 rounded-md bg-[#245A81] text-white flex items-center justify-center shrink-0 mt-0.5 shadow-xs">
+                  <UserIcon className="w-4 h-4" />
+                </div>
+              )}
             </div>
           );
         })}
@@ -257,28 +395,26 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
             <div className="w-7 h-7 rounded-md bg-[#17365D] text-white flex items-center justify-center shrink-0 mt-0.5">
               <Bot className="w-4 h-4 text-emerald-400" />
             </div>
-            <div className="bg-[#F4F7FA] text-[#5E6B78] rounded-lg p-3 border border-[#D8E1EA] flex items-center gap-2">
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#16834A]" />
-              <span>Querying Qdrant vector database and synthesizing with Groq...</span>
+            <div className="bg-[#F4F7FA] text-[#5E6B78] rounded-lg p-3.5 border border-[#D8E1EA] flex items-center gap-2.5">
+              <Loader2 className="w-4 h-4 animate-spin text-[#16834A]" />
+              <span>Querying Qdrant vector database and generating grounded answer...</span>
             </div>
           </div>
         )}
+
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Question Input Bar */}
-      <div className="bg-white rounded-lg p-2.5 border border-[#D8E1EA] shadow-xs flex items-center gap-2">
-        <input
-          type="text"
+      <div className="bg-white rounded-lg p-2.5 border border-[#D8E1EA] shadow-xs flex items-end gap-2">
+        <textarea
+          ref={textareaRef}
+          rows={1}
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSendMessage(inputText);
-            }
-          }}
-          placeholder="Ask any question regarding food packaging materials, ASTM barriers, or shelf-life..."
-          className="flex-1 bg-transparent px-3 py-1.5 text-xs text-[#202B38] placeholder:text-slate-400 focus:outline-none"
+          onKeyDown={handleKeyDown}
+          placeholder="Ask a technical question about food packaging (Press Enter to send, Shift+Enter for newline)..."
+          className="flex-1 bg-transparent px-3 py-1.5 text-xs text-[#202B38] placeholder:text-slate-400 focus:outline-none resize-none max-h-24 min-h-[34px]"
         />
 
         <button
@@ -287,7 +423,10 @@ export const AIAssistantView: React.FC<AIAssistantViewProps> = ({
           className="px-4 py-2 rounded-md bg-[#16834A] hover:bg-[#136f3e] disabled:opacity-50 text-white font-bold text-xs shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer shrink-0"
         >
           {isLoading ? (
-            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <span>Sending...</span>
+            </>
           ) : (
             <>
               <span>Send</span>
