@@ -1,0 +1,13 @@
+scenario_id,storage_type,condition_name,temp_min_C,temp_max_C,RH_min_pct,RH_max_pct,typical_temp_C,typical_RH_pct,context
+S01,ambient,Ambient - moderate (dry season),20,32,40,65,26,55,storage
+S02,ambient,Ambient - hot & humid (monsoon/coastal),28,36,75,95,31,85,storage
+S03,ambient,Ambient - hot & dry,30,42,20,45,36,30,storage
+S04,chilled,Cold room (chilled),0,4,85,95,2,90,storage
+S05,chilled,Refrigerated retail / domestic fridge,3,8,70,90,5,80,storage
+S06,cool,Cool store for chill-sensitive produce,8,14,88,95,11,92,storage
+S07,frozen,Deep freezer,-22,-15,85,95,-18,90,storage
+S08,frozen,Ultra-cold freezer (ice cream),-30,-22,85,95,-25,90,storage
+S09,ambient,Ambient truck (unrefrigerated),25,42,50,90,34,70,transport
+S10,chilled,Refrigerated truck (chilled),0,8,80,95,4,88,transport
+S11,frozen,Refrigerated truck (frozen),-22,-15,85,95,-18,90,transport
+S12,cool,Reefer for chill-sensitive produce,8,14,88,95,12,92,transport

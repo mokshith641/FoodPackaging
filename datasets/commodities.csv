@@ -1,0 +1,54 @@
+commodity_id,commodity,category,moisture_pct,fat_pct,pH,water_activity,respiring,resp_rate_mgCO2_kg_h_at_Topt,resp_Q10,resp_class_at_5C,ethylene_sensitive,optimal_temp_C,optimal_RH_pct,optimal_O2_pct_min,optimal_O2_pct_max,optimal_CO2_pct_min,optimal_CO2_pct_max,base_shelf_life_days,shelf_life_Q10,o2_sensitivity_0to3,moisture_sensitivity_0to3,light_sensitive,moisture_limit_pct,default_storage_type,data_confidence,notes
+C001,Wheat flour (atta),dry_staple,12,1.7,6.3,0.6,N,,,,N,25,60,,,,,180,2.0,0,2,0,3.0,ambient,medium,
+C002,Rice (milled),dry_staple,12,0.6,6.5,0.6,N,,,,N,25,60,,,,,365,2.0,0,2,0,3.0,ambient,medium,
+C003,Lentils (dal),dry_staple,11,1.0,6.5,0.58,N,,,,N,25,60,,,,,365,2.0,0,2,0,3.0,ambient,medium,
+C004,White sugar,dry_staple,0.1,0.0,7.0,0.1,N,,,,N,25,60,,,,,730,1.5,0,3,0,0.5,ambient,medium,caking above ~0.5% moisture gain
+C005,Turmeric powder,spice_beverage,9,3.0,6.0,0.45,N,,,,N,25,60,,,,,365,2.2,2,2,1,4.0,ambient,medium,
+C006,Red chilli powder,spice_beverage,10,12,5.5,0.45,N,,,,N,25,60,,,,,270,2.3,3,2,1,4.0,ambient,medium,colour (carotenoid) loss via light+O2
+C007,Black tea (dry),spice_beverage,5,3.0,5.5,0.3,N,,,,N,25,60,,,,,365,2.2,2,3,1,3.0,ambient,medium,"aroma loss, hygroscopic"
+C008,Roasted coffee,spice_beverage,3,15,5.0,0.3,N,,,,N,25,60,,,,,180,2.5,3,2,1,3.0,ambient,medium,needs degassing valve if packed fresh
+C009,Groundnuts (roasted),nuts_high_fat,2,49,6.3,0.3,N,,,,N,25,60,,,,,120,2.5,3,2,1,3.0,ambient,medium,rancidity
+C010,Cashew kernels,nuts_high_fat,5,44,6.0,0.35,N,,,,N,25,60,,,,,180,2.5,3,2,1,3.0,ambient,medium,
+C011,Almonds,nuts_high_fat,5,50,6.2,0.4,N,,,,N,25,60,,,,,365,2.3,2,2,1,3.0,ambient,medium,
+C012,Milk powder (whole),dairy_dry,3.5,26,6.6,0.2,N,,,,N,25,60,,,,,365,2.5,3,3,1,1.5,ambient,medium,caking + fat oxidation
+C013,Potato chips,snack_fried,2,33,6.0,0.2,N,,,,N,25,60,,,,,90,2.5,3,3,1,2.0,ambient,medium,crispness + rancidity; breakage
+C014,Namkeen / bhujia,snack_fried,3,30,6.0,0.25,N,,,,N,25,60,,,,,90,2.5,3,3,1,2.0,ambient,medium,
+C015,Biscuits / cookies,bakery_dry,4,20,6.8,0.3,N,,,,N,25,60,,,,,180,2.2,2,3,0,2.5,ambient,medium,
+C016,Corn flakes (cereal),bakery_dry,3,1.0,6.5,0.2,N,,,,N,25,60,,,,,270,2.0,1,3,0,2.0,ambient,medium,
+C017,Instant noodles (fried),bakery_dry,4,17,6.0,0.3,N,,,,N,25,60,,,,,180,2.3,3,2,0,3.0,ambient,medium,
+C018,Ghee,fat_oil,0.2,99.5,,0.25,N,,,,N,25,60,,,,,270,2.5,3,1,1,1.0,ambient,medium,oxidative rancidity; pH not applicable
+C019,Pasteurised milk,dairy_chilled,87,3.5,6.7,0.99,N,,,,N,4,90,,,,,6,3.0,1,1,1,1.0,chilled,medium,
+C020,Curd / yogurt,dairy_chilled,85,3.5,4.4,0.98,N,,,,N,4,90,,,,,14,3.0,1,1,1,2.0,chilled,medium,
+C021,Paneer,dairy_chilled,55,22,6.0,0.98,N,,,,N,4,90,,,,,7,3.0,2,2,0,3.0,chilled,medium,
+C022,Butter,dairy_chilled,16,81,6.3,0.95,N,,,,N,4,90,,,,,90,2.5,3,1,1,1.0,chilled,medium,
+C023,Cheese (cheddar/processed),dairy_chilled,37,33,5.2,0.95,N,,,,N,4,85,,,,,120,2.5,3,2,1,2.0,chilled,medium,
+C024,Sliced bread,bakery_fresh,36,3.0,5.5,0.95,N,,,,N,25,70,,,,,5,2.5,2,2,0,3.0,ambient,medium,mould + staling
+C025,Eggs (shell),eggs,75,10,7.6,0.97,N,,,,N,4,80,,,,,35,3.0,0,2,0,3.0,chilled,medium,
+C026,"Chicken (raw, fresh)",meat_fish_chilled,70,5.0,6.0,0.99,N,,,,N,2,90,,,,,4,3.5,3,2,0,2.0,chilled,medium,
+C027,Mutton / goat meat (raw),meat_fish_chilled,72,8.0,5.7,0.99,N,,,,N,2,90,,,,,5,3.5,3,2,0,2.0,chilled,medium,
+C028,Fish fillet (fresh),meat_fish_chilled,78,3.0,6.6,0.99,N,,,,N,1,90,,,,,3,4.0,3,2,0,2.0,chilled,medium,
+C029,"Shrimp (raw, fresh)",meat_fish_chilled,77,1.0,7.0,0.99,N,,,,N,1,90,,,,,3,4.0,3,2,0,2.0,chilled,medium,
+C030,Frozen green peas,frozen,79,0.4,6.5,0.99,N,,,,N,-18,90,,,,,365,3.0,2,2,0,1.5,frozen,medium,
+C031,Frozen fish,frozen,78,3.0,6.6,0.99,N,,,,N,-18,90,,,,,270,3.0,3,3,0,1.0,frozen,medium,
+C032,Ice cream,frozen,61,11,6.5,0.97,N,,,,N,-25,90,,,,,180,3.0,1,2,0,1.5,frozen,medium,
+C033,Frozen chicken,frozen,70,5.0,6.0,0.99,N,,,,N,-18,90,,,,,270,3.0,3,3,0,1.0,frozen,medium,
+C034,Banana (green),fresh_produce_fruit,75,0.3,5.0,0.99,Y,25,2.5,moderate,Y,13,92,2,5,2,5,14,3.0,0,2,0,5,cool,medium,climacteric; chilling injury <12C
+C035,Apple,fresh_produce_fruit,86,0.2,3.5,0.99,Y,4,2.6,low,Y,0,92,1,3,1,3,90,3.0,0,2,0,5,chilled,medium,
+C036,Mango,fresh_produce_fruit,82,0.4,4.0,0.99,Y,25,2.5,moderate,Y,13,90,3,5,5,8,14,3.0,0,2,0,5,cool,medium,climacteric; chilling injury <10-13C
+C037,Papaya,fresh_produce_fruit,88,0.3,5.5,0.99,Y,20,2.5,moderate,Y,12,90,2,5,5,8,12,3.0,0,2,0,5,cool,medium,
+C038,Strawberry,fresh_produce_fruit,91,0.3,3.4,0.99,Y,8,2.8,moderate,N,0,92,5,10,15,20,7,3.5,0,2,0,4,chilled,medium,tolerates high CO2
+C039,Grapes,fresh_produce_fruit,81,0.2,3.5,0.98,Y,3,2.3,very_low,N,0,90,2,5,1,3,30,3.0,0,2,0,3,chilled,medium,stem drying is key defect
+C040,Orange (sweet),fresh_produce_fruit,87,0.1,3.8,0.99,Y,5,2.3,low,N,5,90,5,10,0,5,42,2.5,0,2,0,5,chilled,medium,
+C041,Pomegranate,fresh_produce_fruit,78,1.2,3.5,0.99,Y,6,2.3,low,N,5,90,3,5,6,10,60,2.5,0,2,0,5,chilled,medium,
+C042,Tomato,fresh_produce_veg,94,0.2,4.4,0.99,Y,18,2.5,low,Y,12,90,3,5,0,3,14,3.0,0,2,0,5,cool,medium,mature-green/breaker stage
+C043,Potato,fresh_produce_root_bulb,79,0.1,6.1,0.99,Y,5,2.2,very_low,N,8,92,5,10,0,3,120,2.5,0,2,1,5,cool,low,low MAP benefit; keep dark+ventilated (greening)
+C044,Onion (dry bulb),fresh_produce_root_bulb,89,0.1,5.6,0.98,Y,4,2.4,low,N,0,68,1,3,5,10,150,2.5,0,2,0,5,chilled,low,needs ventilation; low MAP benefit
+C045,Carrot,fresh_produce_root_bulb,88,0.2,6.0,0.99,Y,4,2.5,low,Y,0,97,2,5,2,4,90,2.5,0,2,0,4,chilled,medium,
+C046,Cabbage,fresh_produce_veg,92,0.1,6.2,0.99,Y,5,2.4,low,Y,0,97,2,5,3,6,60,2.5,0,2,0,5,chilled,medium,
+C047,Cauliflower,fresh_produce_veg,92,0.3,6.5,0.99,Y,12,2.5,moderate,Y,0,95,2,5,2,5,21,3.0,0,2,0,4,chilled,medium,
+C048,Broccoli,fresh_produce_veg,89,0.4,6.4,0.99,Y,25,2.8,very_high,Y,0,97,1,3,5,10,14,3.5,0,2,0,3,chilled,medium,
+C049,Spinach,fresh_produce_leafy,91,0.4,6.5,0.99,Y,25,2.6,very_high,Y,0,97,7,10,5,10,8,3.5,0,2,0,3,chilled,medium,
+C050,Cucumber,fresh_produce_veg,96,0.1,5.5,0.99,Y,15,2.4,low,Y,12,95,3,5,0,2,10,3.0,0,2,0,3,cool,medium,chilling injury <10C
+C051,Bell pepper (capsicum),fresh_produce_veg,92,0.3,5.3,0.99,Y,15,2.5,moderate,N,8,92,3,5,0,3,14,2.8,0,2,0,4,cool,medium,
+C052,Okra (bhindi),fresh_produce_veg,90,0.2,6.0,0.99,Y,45,2.6,high,Y,10,92,3,5,0,4,7,3.0,0,2,0,4,cool,low,chilling injury <7C
+C053,Button mushroom,fresh_produce_veg,92,0.3,6.5,0.99,Y,50,3.0,extremely_high,N,2,92,3,5,5,10,5,3.5,0,2,0,3,chilled,medium,browning; high respiration

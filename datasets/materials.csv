@@ -1,0 +1,21 @@
+material_id,material,structure,material_class,ref_thickness_um,thickness_min_um,thickness_max_um,thickness_scalable,OTR_cc_m2_day_at_ref,WVTR_g_m2_day_at_ref,O2_permeability_cc_um_m2_day,WV_permeability_g_um_m2_day,CO2_to_O2_perm_ratio,tunable_OTR_min,tunable_OTR_max,density_g_cc,tensile_MPa,heat_seal_temp_C,sealability,standalone_pack_ok,transparency,light_barrier,low_temp_ok,gas_barrier_class,breathable,recyclability,biodegradable,cost_inr_per_kg,co2e_kg_per_kg,sustainability_score,notes
+M01,LDPE film,mono LDPE,polyolefin,50,25,100,Y,3500,9,175000,450,4.5,,,0.92,16,120,good,Y,high,N,Y,low,N,recyclable,N,130,2.1,76,cheap general-purpose; poor gas barrier
+M02,HDPE film,mono HDPE,polyolefin,40,20,80,Y,1000,4.3,40000,172,4.0,,,0.95,28,140,good,Y,medium,N,Y,low,N,recyclable,N,120,1.9,77,good moisture barrier for dry goods
+M03,"BOPP film (heat-sealable, coated)",BOPP,polyolefin,20,15,40,Y,1750,5,35000,100,4.0,,,0.91,150,120,fair,Y,high,N,Y,low,N,recyclable,N,165,2.2,75,"clear, stiff, good WVTR"
+M04,CPP film,cast PP,polyolefin,30,25,80,Y,2500,8.3,75000,249,4.0,,,0.91,45,140,good,Y,high,N,N,low,N,recyclable,N,160,2.2,75,brittle at freezer temps
+M05,PET film (biaxially oriented),BOPET,polyester,12,12,36,Y,125,41.7,1500,500,4.5,,,1.39,200,,poor_alone,N,high,N,Y,medium,N,recyclable,N,190,3.0,72,needs sealant layer (see M19)
+M06,Nylon 6 film (BO),BOPA,polyamide,15,15,25,Y,53,333,795,4995,3.5,,,1.14,150,,poor_alone,N,high,N,Y,medium,N,limited,N,350,8.5,17,OTR rises with humidity; needs sealant (see M20)
+M07,PVC film,PVC,vinyl,25,20,60,Y,500,36,12500,900,4.0,,,1.35,45,140,fair,Y,high,N,N,low,N,limited,N,110,2.4,44,"cling/stretch wrap, trays"
+M08,PVDC-coated BOPP,PVDC/BOPP,barrier_coated,25,25,25,N,15,5,,,3.0,,,1.0,120,120,good,Y,high,N,Y,medium,N,non_recyclable,N,300,4.2,21,good O2 + moisture barrier
+M09,PE/EVOH/PE coextruded film,PE/EVOH/PE,coextruded_barrier,60,60,60,N,5,7,,,3.0,,,0.95,30,130,good,Y,high,N,Y,high,N,limited,N,400,4.0,37,EVOH loses barrier at high RH; PE-rich structure
+M10,Metallised BOPP / CPP laminate,Met-BOPP 20 / CPP 25,metallised,45,45,45,N,50,1.0,,,4.0,,,0.91,130,130,good,Y,opaque,Y,N,medium,N,limited,N,210,2.6,43,snack/biscuit workhorse
+M11,Metallised PET / PE laminate,Met-PET 12 / PE 40,metallised,52,52,52,N,1.5,0.8,,,4.0,,,1.2,60,130,good,Y,opaque,Y,Y,high,N,non_recyclable,N,260,3.6,24,high barrier
+M12,PET / Aluminium foil / PE laminate,PET 12 / Al 9 / PE 50,foil_laminate,71,71,71,N,0.01,0.01,,,1.0,,,1.5,55,140,good,Y,opaque,Y,Y,high,N,non_recyclable,N,480,5.5,16,maximum barrier
+M13,PLA film,PLA,bio_based,25,20,50,Y,560,120,14000,3000,5.0,,,1.25,55,135,fair,Y,high,N,N,low,N,compostable,Y,380,1.7,82,industrial compostable; brittle; poor WVTR
+M14,PBAT / starch compostable film,PBAT-starch blend,bio_based,30,20,60,Y,1500,140,45000,4200,4.0,,,1.25,20,120,good,Y,medium,N,Y,low,N,compostable,Y,340,2.8,78,compostable; moderate barrier
+M15,PVDC-coated cellophane,coated cellulose,cellulose,30,30,30,N,10,12,,,3.0,,,1.45,100,130,good,Y,high,N,N,high,N,limited,N,300,3.5,39,
+M16,PE-coated paper / paperboard,paper + PE 15 um,paper_based,95,95,95,N,3000,25,,,1.0,,,0.8,30,130,good,Y,opaque,Y,Y,low,N,limited,N,135,1.7,47,"cartons, sachets; poor gas barrier"
+M17,Micro-perforated BOPP (breathable),MP-BOPP,breathable,25,25,25,N,10000,20,,,1.0,2000,40000,0.91,120,120,fair,Y,high,N,Y,low,Y,recyclable,N,220,2.3,75,OTR tuned by perforation count
+M18,Micro-perforated LDPE (breathable),MP-LDPE,breathable,30,30,30,N,15000,30,,,1.0,3000,60000,0.92,14,120,good,Y,high,N,Y,low,Y,recyclable,N,180,2.2,75,OTR tuned by perforation count
+M19,PET / PE laminate,PET 12 / PE 50,laminate,62,62,62,N,90,7,,,4.0,,,1.0,60,140,good,Y,high,N,Y,medium,N,non_recyclable,N,220,2.9,27,general medium-barrier pouch
+M20,PA / PE coextruded vacuum pouch,PA 15 / PE 60,laminate,75,75,75,N,40,7,,,3.5,,,1.0,45,140,good,Y,high,N,Y,medium,N,non_recyclable,N,280,4.5,20,"vacuum/MAP for meat, fish, cheese"

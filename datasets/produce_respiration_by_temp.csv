@@ -1,0 +1,201 @@
+commodity_id,commodity,temp_C,resp_rate_mgCO2_kg_h,method
+C034,Banana (green),0,7.6,Q10-derived from rate at optimal temp
+C034,Banana (green),2,9.1,Q10-derived from rate at optimal temp
+C034,Banana (green),5,12.0,Q10-derived from rate at optimal temp
+C034,Banana (green),8,15.8,Q10-derived from rate at optimal temp
+C034,Banana (green),10,19.0,Q10-derived from rate at optimal temp
+C034,Banana (green),13,25.0,Q10-derived from rate at optimal temp
+C034,Banana (green),15,30.0,Q10-derived from rate at optimal temp
+C034,Banana (green),20,47.5,Q10-derived from rate at optimal temp
+C034,Banana (green),25,75.1,Q10-derived from rate at optimal temp
+C034,Banana (green),30,118.7,Q10-derived from rate at optimal temp
+C035,Apple,0,4.0,Q10-derived from rate at optimal temp
+C035,Apple,2,4.8,Q10-derived from rate at optimal temp
+C035,Apple,5,6.4,Q10-derived from rate at optimal temp
+C035,Apple,8,8.6,Q10-derived from rate at optimal temp
+C035,Apple,10,10.4,Q10-derived from rate at optimal temp
+C035,Apple,13,13.9,Q10-derived from rate at optimal temp
+C035,Apple,15,16.8,Q10-derived from rate at optimal temp
+C035,Apple,20,27.0,Q10-derived from rate at optimal temp
+C035,Apple,25,43.6,Q10-derived from rate at optimal temp
+C035,Apple,30,70.3,Q10-derived from rate at optimal temp
+C036,Mango,0,7.6,Q10-derived from rate at optimal temp
+C036,Mango,2,9.1,Q10-derived from rate at optimal temp
+C036,Mango,5,12.0,Q10-derived from rate at optimal temp
+C036,Mango,8,15.8,Q10-derived from rate at optimal temp
+C036,Mango,10,19.0,Q10-derived from rate at optimal temp
+C036,Mango,13,25.0,Q10-derived from rate at optimal temp
+C036,Mango,15,30.0,Q10-derived from rate at optimal temp
+C036,Mango,20,47.5,Q10-derived from rate at optimal temp
+C036,Mango,25,75.1,Q10-derived from rate at optimal temp
+C036,Mango,30,118.7,Q10-derived from rate at optimal temp
+C037,Papaya,0,6.7,Q10-derived from rate at optimal temp
+C037,Papaya,2,8.0,Q10-derived from rate at optimal temp
+C037,Papaya,5,10.5,Q10-derived from rate at optimal temp
+C037,Papaya,8,13.9,Q10-derived from rate at optimal temp
+C037,Papaya,10,16.7,Q10-derived from rate at optimal temp
+C037,Papaya,13,21.9,Q10-derived from rate at optimal temp
+C037,Papaya,15,26.3,Q10-derived from rate at optimal temp
+C037,Papaya,20,41.6,Q10-derived from rate at optimal temp
+C037,Papaya,25,65.8,Q10-derived from rate at optimal temp
+C037,Papaya,30,104.1,Q10-derived from rate at optimal temp
+C038,Strawberry,0,8.0,Q10-derived from rate at optimal temp
+C038,Strawberry,2,9.8,Q10-derived from rate at optimal temp
+C038,Strawberry,5,13.4,Q10-derived from rate at optimal temp
+C038,Strawberry,8,18.2,Q10-derived from rate at optimal temp
+C038,Strawberry,10,22.4,Q10-derived from rate at optimal temp
+C038,Strawberry,13,30.5,Q10-derived from rate at optimal temp
+C038,Strawberry,15,37.5,Q10-derived from rate at optimal temp
+C038,Strawberry,20,62.7,Q10-derived from rate at optimal temp
+C038,Strawberry,25,105.0,Q10-derived from rate at optimal temp
+C038,Strawberry,30,175.6,Q10-derived from rate at optimal temp
+C039,Grapes,0,3.0,Q10-derived from rate at optimal temp
+C039,Grapes,2,3.5,Q10-derived from rate at optimal temp
+C039,Grapes,5,4.5,Q10-derived from rate at optimal temp
+C039,Grapes,8,5.8,Q10-derived from rate at optimal temp
+C039,Grapes,10,6.9,Q10-derived from rate at optimal temp
+C039,Grapes,13,8.9,Q10-derived from rate at optimal temp
+C039,Grapes,15,10.5,Q10-derived from rate at optimal temp
+C039,Grapes,20,15.9,Q10-derived from rate at optimal temp
+C039,Grapes,25,24.1,Q10-derived from rate at optimal temp
+C039,Grapes,30,36.5,Q10-derived from rate at optimal temp
+C040,Orange (sweet),0,3.3,Q10-derived from rate at optimal temp
+C040,Orange (sweet),2,3.9,Q10-derived from rate at optimal temp
+C040,Orange (sweet),5,5.0,Q10-derived from rate at optimal temp
+C040,Orange (sweet),8,6.4,Q10-derived from rate at optimal temp
+C040,Orange (sweet),10,7.6,Q10-derived from rate at optimal temp
+C040,Orange (sweet),13,9.7,Q10-derived from rate at optimal temp
+C040,Orange (sweet),15,11.5,Q10-derived from rate at optimal temp
+C040,Orange (sweet),20,17.4,Q10-derived from rate at optimal temp
+C040,Orange (sweet),25,26.4,Q10-derived from rate at optimal temp
+C040,Orange (sweet),30,40.1,Q10-derived from rate at optimal temp
+C041,Pomegranate,0,4.0,Q10-derived from rate at optimal temp
+C041,Pomegranate,2,4.7,Q10-derived from rate at optimal temp
+C041,Pomegranate,5,6.0,Q10-derived from rate at optimal temp
+C041,Pomegranate,8,7.7,Q10-derived from rate at optimal temp
+C041,Pomegranate,10,9.1,Q10-derived from rate at optimal temp
+C041,Pomegranate,13,11.7,Q10-derived from rate at optimal temp
+C041,Pomegranate,15,13.8,Q10-derived from rate at optimal temp
+C041,Pomegranate,20,20.9,Q10-derived from rate at optimal temp
+C041,Pomegranate,25,31.7,Q10-derived from rate at optimal temp
+C041,Pomegranate,30,48.1,Q10-derived from rate at optimal temp
+C042,Tomato,0,6.0,Q10-derived from rate at optimal temp
+C042,Tomato,2,7.2,Q10-derived from rate at optimal temp
+C042,Tomato,5,9.5,Q10-derived from rate at optimal temp
+C042,Tomato,8,12.5,Q10-derived from rate at optimal temp
+C042,Tomato,10,15.0,Q10-derived from rate at optimal temp
+C042,Tomato,13,19.7,Q10-derived from rate at optimal temp
+C042,Tomato,15,23.7,Q10-derived from rate at optimal temp
+C042,Tomato,20,37.5,Q10-derived from rate at optimal temp
+C042,Tomato,25,59.2,Q10-derived from rate at optimal temp
+C042,Tomato,30,93.7,Q10-derived from rate at optimal temp
+C043,Potato,0,2.7,Q10-derived from rate at optimal temp
+C043,Potato,2,3.1,Q10-derived from rate at optimal temp
+C043,Potato,5,3.9,Q10-derived from rate at optimal temp
+C043,Potato,8,5.0,Q10-derived from rate at optimal temp
+C043,Potato,10,5.9,Q10-derived from rate at optimal temp
+C043,Potato,13,7.4,Q10-derived from rate at optimal temp
+C043,Potato,15,8.7,Q10-derived from rate at optimal temp
+C043,Potato,20,12.9,Q10-derived from rate at optimal temp
+C043,Potato,25,19.1,Q10-derived from rate at optimal temp
+C043,Potato,30,28.3,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),0,4.0,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),2,4.8,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),5,6.2,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),8,8.1,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),10,9.6,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),13,12.5,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),15,14.9,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),20,23.0,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),25,35.7,Q10-derived from rate at optimal temp
+C044,Onion (dry bulb),30,55.3,Q10-derived from rate at optimal temp
+C045,Carrot,0,4.0,Q10-derived from rate at optimal temp
+C045,Carrot,2,4.8,Q10-derived from rate at optimal temp
+C045,Carrot,5,6.3,Q10-derived from rate at optimal temp
+C045,Carrot,8,8.3,Q10-derived from rate at optimal temp
+C045,Carrot,10,10.0,Q10-derived from rate at optimal temp
+C045,Carrot,13,13.2,Q10-derived from rate at optimal temp
+C045,Carrot,15,15.8,Q10-derived from rate at optimal temp
+C045,Carrot,20,25.0,Q10-derived from rate at optimal temp
+C045,Carrot,25,39.5,Q10-derived from rate at optimal temp
+C045,Carrot,30,62.5,Q10-derived from rate at optimal temp
+C046,Cabbage,0,5.0,Q10-derived from rate at optimal temp
+C046,Cabbage,2,6.0,Q10-derived from rate at optimal temp
+C046,Cabbage,5,7.7,Q10-derived from rate at optimal temp
+C046,Cabbage,8,10.1,Q10-derived from rate at optimal temp
+C046,Cabbage,10,12.0,Q10-derived from rate at optimal temp
+C046,Cabbage,13,15.6,Q10-derived from rate at optimal temp
+C046,Cabbage,15,18.6,Q10-derived from rate at optimal temp
+C046,Cabbage,20,28.8,Q10-derived from rate at optimal temp
+C046,Cabbage,25,44.6,Q10-derived from rate at optimal temp
+C046,Cabbage,30,69.1,Q10-derived from rate at optimal temp
+C047,Cauliflower,0,12.0,Q10-derived from rate at optimal temp
+C047,Cauliflower,2,14.4,Q10-derived from rate at optimal temp
+C047,Cauliflower,5,19.0,Q10-derived from rate at optimal temp
+C047,Cauliflower,8,25.0,Q10-derived from rate at optimal temp
+C047,Cauliflower,10,30.0,Q10-derived from rate at optimal temp
+C047,Cauliflower,13,39.5,Q10-derived from rate at optimal temp
+C047,Cauliflower,15,47.4,Q10-derived from rate at optimal temp
+C047,Cauliflower,20,75.0,Q10-derived from rate at optimal temp
+C047,Cauliflower,25,118.6,Q10-derived from rate at optimal temp
+C047,Cauliflower,30,187.5,Q10-derived from rate at optimal temp
+C048,Broccoli,0,25.0,Q10-derived from rate at optimal temp
+C048,Broccoli,2,30.7,Q10-derived from rate at optimal temp
+C048,Broccoli,5,41.8,Q10-derived from rate at optimal temp
+C048,Broccoli,8,57.0,Q10-derived from rate at optimal temp
+C048,Broccoli,10,70.0,Q10-derived from rate at optimal temp
+C048,Broccoli,13,95.3,Q10-derived from rate at optimal temp
+C048,Broccoli,15,117.1,Q10-derived from rate at optimal temp
+C048,Broccoli,20,196.0,Q10-derived from rate at optimal temp
+C048,Broccoli,25,328.0,Q10-derived from rate at optimal temp
+C048,Broccoli,30,548.8,Q10-derived from rate at optimal temp
+C049,Spinach,0,25.0,Q10-derived from rate at optimal temp
+C049,Spinach,2,30.3,Q10-derived from rate at optimal temp
+C049,Spinach,5,40.3,Q10-derived from rate at optimal temp
+C049,Spinach,8,53.7,Q10-derived from rate at optimal temp
+C049,Spinach,10,65.0,Q10-derived from rate at optimal temp
+C049,Spinach,13,86.6,Q10-derived from rate at optimal temp
+C049,Spinach,15,104.8,Q10-derived from rate at optimal temp
+C049,Spinach,20,169.0,Q10-derived from rate at optimal temp
+C049,Spinach,25,272.5,Q10-derived from rate at optimal temp
+C049,Spinach,30,439.4,Q10-derived from rate at optimal temp
+C050,Cucumber,0,5.2,Q10-derived from rate at optimal temp
+C050,Cucumber,2,6.2,Q10-derived from rate at optimal temp
+C050,Cucumber,5,8.1,Q10-derived from rate at optimal temp
+C050,Cucumber,8,10.6,Q10-derived from rate at optimal temp
+C050,Cucumber,10,12.6,Q10-derived from rate at optimal temp
+C050,Cucumber,13,16.4,Q10-derived from rate at optimal temp
+C050,Cucumber,15,19.5,Q10-derived from rate at optimal temp
+C050,Cucumber,20,30.2,Q10-derived from rate at optimal temp
+C050,Cucumber,25,46.8,Q10-derived from rate at optimal temp
+C050,Cucumber,30,72.5,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),0,7.2,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),2,8.7,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),5,11.4,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),8,15.0,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),10,18.0,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),13,23.7,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),15,28.5,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),20,45.0,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),25,71.2,Q10-derived from rate at optimal temp
+C051,Bell pepper (capsicum),30,112.6,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),0,17.3,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),2,21.0,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),5,27.9,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),8,37.2,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),10,45.0,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),13,59.9,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),15,72.6,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),20,117.0,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),25,188.7,Q10-derived from rate at optimal temp
+C052,Okra (bhindi),30,304.2,Q10-derived from rate at optimal temp
+C053,Button mushroom,0,40.1,Q10-derived from rate at optimal temp
+C053,Button mushroom,2,50.0,Q10-derived from rate at optimal temp
+C053,Button mushroom,5,69.5,Q10-derived from rate at optimal temp
+C053,Button mushroom,8,96.7,Q10-derived from rate at optimal temp
+C053,Button mushroom,10,120.4,Q10-derived from rate at optimal temp
+C053,Button mushroom,13,167.4,Q10-derived from rate at optimal temp
+C053,Button mushroom,15,208.6,Q10-derived from rate at optimal temp
+C053,Button mushroom,20,361.2,Q10-derived from rate at optimal temp
+C053,Button mushroom,25,625.7,Q10-derived from rate at optimal temp
+C053,Button mushroom,30,1083.7,Q10-derived from rate at optimal temp

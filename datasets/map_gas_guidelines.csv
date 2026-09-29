@@ -1,0 +1,17 @@
+commodity_id,commodity,pack_mode,O2_pct,CO2_pct,N2_pct,max_pack_OTR_cc_m2_day,shelf_life_extension_factor,map_trigger_ratio,notes,basis
+C026,"Chicken (raw, fresh)",MAP,0,30,70,100,2.0,1.25,poultry: CO2/N2; O2 avoided,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C027,Mutton / goat meat (raw),MAP,70,30,0,100,1.7,1.25,high-O2 MAP keeps red colour,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C028,Fish fillet (fresh),MAP,30,40,30,50,1.7,1.25,lean fish mix; fatty fish use ~60% CO2 / 40% N2,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C029,"Shrimp (raw, fresh)",MAP,0,40,60,50,1.6,1.25,,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C024,Sliced bread,MAP,0,60,40,500,2.0,1.4,optional; CO2 suppresses mould,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C023,Cheese (cheddar/processed),MAP,0,30,70,30,1.5,1.0,CO2/N2 or vacuum,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C021,Paneer,vacuum,0,0,0,30,1.8,1.0,vacuum pack,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C013,Potato chips,N2 flush,0,0,100,50,1.3,1.0,residual O2 <2%; also cushions product,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C014,Namkeen / bhujia,N2 flush,0,0,100,100,1.3,1.0,residual O2 <2%,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C009,Groundnuts (roasted),N2 flush,0,0,100,50,1.3,1.0,,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C010,Cashew kernels,N2 flush,0,0,100,50,1.3,1.0,,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C011,Almonds,N2 flush,0,0,100,100,1.2,1.0,optional,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C008,Roasted coffee,N2 flush,0,0,100,10,1.3,1.0,add one-way degassing valve for freshly roasted coffee,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C012,Milk powder (whole),N2 flush,0,0,100,10,1.3,1.0,,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C031,Frozen fish,vacuum,0,0,0,50,1.3,1.0,vacuum / vacuum skin,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
+C033,Frozen chicken,vacuum,0,0,0,50,1.3,1.0,vacuum / vacuum skin,typical industry/literature ranges (e.g. Robertson; Sivertsvik et al.) - verify
